@@ -7,4 +7,4 @@ Tutorial pake database:
 
 1. Buka phpmyadmin
 2. Create database cyber_resource
-3. Import semua file .sql ke DB
+3. Import cyber_resource.sql ke DB
