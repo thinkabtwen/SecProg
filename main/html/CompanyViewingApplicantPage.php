@@ -40,7 +40,7 @@ $username = $_SESSION['username'];
         <div class="applicant">
           <div class="applicant-info">
             <h3>Applicant #1</h3>
-            <a href="./CompanyViewingSpecificApplicantPage.html">
+            <a href="./CompanyViewingSpecificApplicantPage.php">
               <img src="../../Image/default_profile.jpg" alt="Applicant Profile">
             </a>
             <p>Applicant Type: Full-Time</p>
@@ -52,7 +52,7 @@ $username = $_SESSION['username'];
             <p>Miscellaneous:</p>
             <br>
             <h3>Applicant #2</h3>
-            <a href="./CompanyViewingSpecificApplicantPage.html">
+            <a href="./CompanyViewingSpecificApplicantPage.php">
               <img src="../../Image/default_profile.jpg" alt="Applicant Profile">
             </a>
             <p>Applicant Type:</p>

@@ -45,7 +45,7 @@ $username = $_SESSION['username'];
     <li>Python</li>
     <li>Java</li>
   </div>
-  <a href="./CompanyViewingApplicantPage.html">
+  <a href="./CompanyViewingApplicantPage.php">
     <label type="button" class="btn-lg btn-primary">Back</label>
   </a>
   <script>

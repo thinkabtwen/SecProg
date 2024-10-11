@@ -16,11 +16,11 @@ if ($conn->connect_error) {
 
 // Register user
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["register"])) {
-  $name = $_POST["name"];
-  $email = $_POST["email"];
-  $password = $_POST["password"];
-  $cpassword = $_POST["cpassword"];
-  $role = $_POST["role"];
+  $name = htmlspecialchars($_POST["name"]);
+  $email = htmlspecialchars($_POST["email"]);
+  $password = htmlspecialchars($_POST["password"]);
+  $cpassword = htmlspecialchars($_POST["cpassword"]);
+  $role = htmlspecialchars($_POST["role"]);
 
   if (strlen($password) >= 8) { // Check password length
     if ($password == $cpassword) {
@@ -45,8 +45,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["register"])) {
 
 // User Login
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["login"])) {
-  $email = $_POST["email"];
-  $password = $_POST["password"];
+  $email = htmlspecialchars($_POST["email"]);
+  $password = htmlspecialchars($_POST["password"]);
 
   $sql = "SELECT * FROM users WHERE email=?";
   $stmt = $conn->prepare($sql);

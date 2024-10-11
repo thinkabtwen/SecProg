@@ -113,7 +113,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <button type="submit">Create Job Listing</button>
       </form>
 
-      <a href="./CompanyJobListing.html">
+      <a href="./CompanyJobListing.php">
         <label type="button" class="btn-lg btn-primary">Back</label>
       </a>
     </main>

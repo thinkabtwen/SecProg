@@ -22,7 +22,7 @@ $username = $_SESSION['username'];
 
         <div class="container-content">
             <div class="box">
-                <a href="./CompanyJobListing.html">
+                <a href="./CompanyJobListing.php">
                     <img src="../../Image/hook.png">
                 </a>
                 <h3>Company Job Listing</h3>
@@ -31,7 +31,7 @@ $username = $_SESSION['username'];
             
 
             <div class="box">
-                <a href="./CompanyViewingApplicantPage.html">
+                <a href="./CompanyViewingApplicantPage.php">
                     <img src="../../Image/workers.png">
                 </a>
                 <h3>View Applicant Profile</h3>
@@ -39,7 +39,7 @@ $username = $_SESSION['username'];
             </div>
 
             <div class="box">
-                <a href="./CompanyProfile.html">
+                <a href="./CompanyProfile.php">
                     <img src="../../Image/officebuildingicons.png">
                 </a>
                 <h3>Company Profile</h3>

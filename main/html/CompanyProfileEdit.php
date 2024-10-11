@@ -50,7 +50,7 @@ $username = $_SESSION['username'];
                         <td><input type="text" class="form-control" name="address" placeholder="address"></td></tr> 
                 </table>
             <div class="p-2">
-                <a href="./CompanyProfile.html">
+                <a href="./CompanyProfile.php">
                     <label type="button" class="btn-lg btn-primary">Back</label>
                 </a>
                 <button class="btn-lg btn-primary float-end">Save</button>
