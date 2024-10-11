@@ -1,0 +1,44 @@
+<html>
+<head>
+    <title>Login Page</title>
+    <link rel="stylesheet" href="../css/RegisterLoginPageStyle.css"> <!-- RegisterLoginPageStyle.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+    <div class="header">
+        <div class="inner-header">
+            <div class="logo-container">
+                <h1>Cyber <span>Resource</span></h1>
+            </div>
+                <ul class="navigation">
+                    <a href="./MainHomePage.html"><li>Home</li></a>
+                    <a href="./RegisterPage.html"><li>Register</li></a>
+                    <a href="./LoginPage.html"><li>Login</li></a>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div class="form-container">
+        <form action="../php/config.php" method="post" enctype="multipart/form-data">
+            <h3>Login</h3>
+            <input type="email" name="email" placeholder="enter email" class="box" required>
+            <input type="password" name="password" placeholder="enter password" class="box" required>
+            <input type="hidden" name="login" value="1">
+            <input type="submit" value="login now" class="btn">
+            <p>don't have an account? <a href="RegisterPage.html">register now</a></p>
+        </form>
+    </div>
+
+    <script> // navbar for 700px screen
+        var navbar = document.getElementById("navbar");
+
+        function showMenu(){
+            navbar.style.right = "0";
+        }
+        function hideMenu(){
+            navbar.style.right = "-200px";
+        }
+    </script>
+</body>
+</html>
