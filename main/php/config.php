@@ -14,8 +14,6 @@ if ($conn->connect_error) {
   die("Connection failed: " . $conn->connect_error);
 }
 
-$registrationError = "";
-
 // Register user
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["register"])) {
   $name = htmlspecialchars($_POST["name"]);
@@ -48,10 +46,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["register"])) {
         header("Location: ../html/LoginPage.html");
         exit();
       } else {
-        $registrationError = "Passwords do not match!";
+          echo "Passwords do not match!";
       }
     } else {
-      $registrationError = "Password must be at least 8 characters long!";
+        echo "Password must be at least 8 characters long!";
     }
   }
 }
@@ -87,11 +85,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["login"])) {
       }
     } else {
       // Password is incorrect
-      $registrationError = "Invalid email or password!";
+      echo "Invalid email or password!";
     }
   } else {
-    // User with provided email not found
-    $registrationError = "Invalid email or password!";
+    header('Location: https://youtu.be/QvsQ9hYKq7c?si=Kb4wvJCuT3HkNu3G');
   }
 }
 
