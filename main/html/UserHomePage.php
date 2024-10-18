@@ -43,7 +43,7 @@ $username = $_SESSION['username'];
                 <a href="./UserProfile.php">
                     <img src="../../Image/profile.png">
                 </a>
-                <h3>You Profile</h3>
+                <h3>Your Profile</h3>
                 <h5>View and edit your personal profile</h5>
             </div>
             
