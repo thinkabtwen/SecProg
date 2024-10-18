@@ -1,12 +1,45 @@
 <?php
 session_start();
 if (!isset($_SESSION['username'])) {
-  // Redirect to login page if not logged in
-  header("Location: ../html/LoginPage.html");
-  exit();
+    // Redirect to login page if not logged in
+    header("Location: ../html/LoginPage.html");
+    exit();
 }
 
 $username = $_SESSION['username'];
+
+// Database connection settings
+$servername = "localhost"; 
+$db_username = "root"; 
+$db_password = ""; 
+$db_name = "cyber_resource"; 
+
+// Create connection
+$conn = new mysqli($servername, $db_username, $db_password, $db_name);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Fetch user details
+$sql = "SELECT name, email FROM users WHERE name = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $username);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    $name = $row['name'];
+    $email = $row['email'];
+} else {
+    $name = "Not available";
+    $email = "Not available";
+}
+
+$stmt->close();
+$conn->close();
 ?>
 
 <html>
@@ -32,8 +65,8 @@ $username = $_SESSION['username'];
             <div class="h2">User Profile</div>
             <table class="container-fluid table table-striped">
                 <tr><th colspan="2">User Details:</th></tr>
-                <tr><th><i class="fa fa-user-circle"></i> Company Name</th><td>nama</td></tr>
-                <tr><th><i class="fa fa-envelope"></i> Company Email</th><td>email.@email.com</td></tr>
+                <tr><th><i class="fa fa-user-circle"></i> Company Name</th><td><?php echo htmlspecialchars($name); ?></td></tr>
+                <tr><th><i class="fa fa-envelope"></i> Company Email</th><td><?php echo htmlspecialchars(string: $email); ?></td></tr>
                 <tr><th><i class="fa fa-briefcase"></i> Company Specialization</th><td>IT</td></tr>
                 <tr><th><i class="fa fa-home"></i> Address</th><td>alamat</td></tr>            
             </table>
