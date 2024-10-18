@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Oct 11, 2024 at 06:32 AM
+-- Generation Time: Oct 18, 2024 at 01:59 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -56,7 +56,10 @@ INSERT INTO `job_listings` (`id`, `username`, `job_title`, `location`, `job_desc
 (11, 'wen1', 'driver', 'jl orange', 'driver', 'part-time', '200000', 'bonus'),
 (12, 'wen1', 'Penetration Tester', 'jl kebon jeruk', 'pentest', 'full-time', '4000000', 'lembur bonus'),
 (13, 'wen1', 'Penetration Tester', 'jl kebon jeruk', 'pentest', 'full-time', '4000000', 'lembur bonus'),
-(14, 'wen1', 'ayam', 'ayam', 'ayam', 'part-time', 'ayam', 'ayam');
+(14, 'wen1', 'ayam', 'ayam', 'ayam', 'part-time', 'ayam', 'ayam'),
+(15, 'wen1', 'SELECT * FROM users', 'SELECT * FROM users', 'SELECT * FROM users', 'part-time', 'SELECT * FROM users', 'SELECT * FROM users'),
+(16, 'wen1', 'SELECT * FROM users', 'SELECT * FROM users', 'SELECT * FROM users', 'full-time', 'SELECT * FROM users', 'SELECT * FROM users'),
+(17, 'company1', 'network engineer', 'jl puri', 'jadi net eng', 'part-time', '3000000', 'bonus');
 
 -- --------------------------------------------------------
 
@@ -70,30 +73,37 @@ CREATE TABLE `users` (
   `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
   `role` varchar(50) NOT NULL,
-  `profile_image` varchar(255) DEFAULT NULL
+  `profile_image` varchar(255) DEFAULT NULL,
+  `age` int(3) DEFAULT NULL,
+  `gender` varchar(10) DEFAULT NULL,
+  `address` varchar(255) DEFAULT NULL,
+  `profession` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `email`, `password`, `role`, `profile_image`) VALUES
-(1, 'tes', 'test@test.com', '$2y$10$se8f6ST.OOyNuth9CuR2duL6uIDZDooPjJjlwKPFtMTZj5V6eurEi', 'Company', NULL),
-(2, 'owen2', 'owen@example.com', '$2y$10$mpEV5LL5dcXfagCyICPDE.Tinw5/N/ZVjbmC5.0cF1Jq2QcxxdiDi', 'Company', NULL),
-(3, 'shane2', 'shane@example.com', '$2y$10$vG.srdd0jKecOl3RbBjrH.xFTtFywx.Iph80jRPPTVfQ26RhQy4H6', 'Company', NULL),
-(4, 'owen12', 'owen12@gmail.com', '$2y$10$30qe9RzZFeKP7uwQ9VHfPOaYPn19nE2vV5KCpEw1J6oxC0wnLqf6i', 'Customer', NULL),
-(5, 'user123', 'user123@example.com', '$2y$10$7V.veZazrfsBOUckbLFlfeIjrGmum.IWP1G0pmsnN2LC5XPxwouxm', 'Company', NULL),
-(6, 'shane14', 'shane14@gmail.com', '$2y$10$4hMzfi7pch9.ruI6YTICgOu4FQfJ3ShdjOtjpEbJNhWZ4LwmcWkD6', 'Company', NULL),
-(7, 'test1', 'test1@gmail.com', '$2y$10$iMhgh3SPaH6tzk7uOGlEdOOL1hzucTr0aefJ6Aauyv1Hh8wcrVTG.', 'Customer', NULL),
-(8, 'hai', 'hai@gmail.com', '$2y$10$nIy0pFmYX2Lhc3DIubUoHeO5TxeiRWBXdnkPx9g.gTvPkhE4abgDa', 'Customer', NULL),
-(9, 'test', 'test2@test.com', '$2y$10$uYDQGwa7CWXsxpTSh5j3tuQ2.azmw4A101phJYhO6gISP6Sjqg8TO', 'Company', NULL),
-(11, 'hello', 'hello@gmail.com', '$2y$10$OZQmtIOy452Oze4gRwcl2.ljc7BmNSioFIOmDia.D8UFGbIglrwE.', 'Customer', NULL),
-(13, 'wen1', 'wen1@test.com', '$2y$10$n6lqfrqajbvzG4/nMJaoieZlggwZIERXpvkHOREbvd7ts3bCffpRK', 'Company', NULL),
-(16, 'wen2', 'wen2@gmail.com', '$2y$10$i8TbxUiFsWCDvk.H6HrE4uLE27BC/lD9bvn6STkRTfHPJ2hIFl57u', 'Customer', NULL),
-(24, 'appledev', 'appledev@email.com', '$2y$10$/6ArvCfhPpxtuNf2BF7LP.etzUMNA88LKdKSMI60mlTVI0SlfkN0a', 'Company', NULL),
-(25, 'wen1', 'wen1@email.com', '$2y$10$9UZIF11KVl0pZ8dq0SLMGOjTn7/7IP3B/OSBqZIlP/wXAdTP8IvAi', 'Company', NULL),
-(30, 'wen3', 'wen3@email.com', '$2y$10$.RNDQtAFIfBzT66JtYCsmuOrMn9n/OewLX7JiS1Gqn9jzdmbg2uh6', 'Customer', NULL),
-(31, 'wen4', 'wen4@email.com', '$2y$10$Tic1kGBjbatXBz0J/s72pOl/51IubBjakzvYYrYYyVt7lfv9TYjW6', 'Company', NULL);
+INSERT INTO `users` (`id`, `name`, `email`, `password`, `role`, `profile_image`, `age`, `gender`, `address`, `profession`) VALUES
+(1, 'tes', 'test@test.com', '$2y$10$se8f6ST.OOyNuth9CuR2duL6uIDZDooPjJjlwKPFtMTZj5V6eurEi', 'Company', NULL, NULL, NULL, NULL, NULL),
+(2, 'owen2', 'owen@example.com', '$2y$10$mpEV5LL5dcXfagCyICPDE.Tinw5/N/ZVjbmC5.0cF1Jq2QcxxdiDi', 'Company', NULL, NULL, NULL, NULL, NULL),
+(3, 'shane2', 'shane@example.com', '$2y$10$vG.srdd0jKecOl3RbBjrH.xFTtFywx.Iph80jRPPTVfQ26RhQy4H6', 'Company', NULL, NULL, NULL, NULL, NULL),
+(4, 'owen12', 'owen12@gmail.com', '$2y$10$30qe9RzZFeKP7uwQ9VHfPOaYPn19nE2vV5KCpEw1J6oxC0wnLqf6i', 'Customer', NULL, NULL, NULL, NULL, NULL),
+(5, 'user123', 'user123@example.com', '$2y$10$7V.veZazrfsBOUckbLFlfeIjrGmum.IWP1G0pmsnN2LC5XPxwouxm', 'Company', NULL, NULL, NULL, NULL, NULL),
+(6, 'shane14', 'shane14@gmail.com', '$2y$10$4hMzfi7pch9.ruI6YTICgOu4FQfJ3ShdjOtjpEbJNhWZ4LwmcWkD6', 'Company', NULL, NULL, NULL, NULL, NULL),
+(7, 'test1', 'test1@gmail.com', '$2y$10$iMhgh3SPaH6tzk7uOGlEdOOL1hzucTr0aefJ6Aauyv1Hh8wcrVTG.', 'Customer', NULL, NULL, NULL, NULL, NULL),
+(8, 'hai', 'hai@gmail.com', '$2y$10$nIy0pFmYX2Lhc3DIubUoHeO5TxeiRWBXdnkPx9g.gTvPkhE4abgDa', 'Customer', NULL, NULL, NULL, NULL, NULL),
+(9, 'test', 'test2@test.com', '$2y$10$uYDQGwa7CWXsxpTSh5j3tuQ2.azmw4A101phJYhO6gISP6Sjqg8TO', 'Company', NULL, NULL, NULL, NULL, NULL),
+(11, 'hello', 'hello@gmail.com', '$2y$10$OZQmtIOy452Oze4gRwcl2.ljc7BmNSioFIOmDia.D8UFGbIglrwE.', 'Customer', NULL, NULL, NULL, NULL, NULL),
+(13, 'wen1', 'wen1@test.com', '$2y$10$n6lqfrqajbvzG4/nMJaoieZlggwZIERXpvkHOREbvd7ts3bCffpRK', 'Company', NULL, NULL, NULL, NULL, NULL),
+(16, 'wen2', 'wen2@gmail.com', '$2y$10$i8TbxUiFsWCDvk.H6HrE4uLE27BC/lD9bvn6STkRTfHPJ2hIFl57u', 'Customer', NULL, NULL, NULL, NULL, NULL),
+(24, 'appledev', 'appledev@email.com', '$2y$10$/6ArvCfhPpxtuNf2BF7LP.etzUMNA88LKdKSMI60mlTVI0SlfkN0a', 'Company', NULL, NULL, NULL, NULL, NULL),
+(25, 'wen1', 'wen1@email.com', '$2y$10$9UZIF11KVl0pZ8dq0SLMGOjTn7/7IP3B/OSBqZIlP/wXAdTP8IvAi', 'Company', NULL, NULL, NULL, NULL, NULL),
+(30, 'wen3', 'wen3@email.com', '$2y$10$.RNDQtAFIfBzT66JtYCsmuOrMn9n/OewLX7JiS1Gqn9jzdmbg2uh6', 'Customer', NULL, NULL, NULL, NULL, NULL),
+(31, 'wen4', 'wen4@email.com', '$2y$10$Tic1kGBjbatXBz0J/s72pOl/51IubBjakzvYYrYYyVt7lfv9TYjW6', 'Company', NULL, NULL, NULL, NULL, NULL),
+(37, 'wen7', 'wen7@email.com', '$2y$10$debuI/dwrx1EDbZb/MVTQOSHEuVq9rqZiybyONRwt4LmeNdxvHZqi', 'Company', NULL, NULL, NULL, NULL, NULL),
+(38, 'customer1', 'customer1@email.com', '$2y$10$DgHTRO5bMNstMz32oz0ljOf.yPHuHBS39e7DBCx12h7yzd3iMqlqS', 'Customer', NULL, NULL, NULL, NULL, NULL),
+(39, 'company1', 'company1@email.com', '$2y$10$AkXfw7CDqARgBdkPmUxUF.Vs33jT3.gOk2vElY6eQV8R.GhqydK5W', 'Company', NULL, NULL, NULL, NULL, NULL);
 
 --
 -- Indexes for dumped tables
@@ -120,13 +130,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `job_listings`
 --
 ALTER TABLE `job_listings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
