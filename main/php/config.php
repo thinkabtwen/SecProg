@@ -11,42 +11,61 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 
 // Check connection
 if ($conn->connect_error) {
-  die("Connection failed: ". $conn->connect_error);
+  die("Connection failed: " . $conn->connect_error);
 }
 
 // Register user
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["register"])) {
   $name = htmlspecialchars($_POST["name"]);
-  $email = $_POST["email"];
-  $password = $_POST["password"];
-  $cpassword = $_POST["cpassword"];
+  $email = htmlspecialchars($_POST["email"]);
+  $password = htmlspecialchars($_POST["password"]);
+  $cpassword = htmlspecialchars($_POST["cpassword"]);
   $role = htmlspecialchars($_POST["role"]);
 
-  if (strlen($password) >= 8) { // Check password length
-    if ($password == $cpassword) {
-      $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+  if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
+    $emailErr = "Invalid email format";
+  }
 
-      $sql = "INSERT INTO users (name, email, password, role) VALUES (?,?,?,?)";
-      $stmt = $conn->prepare($sql);
-      $stmt->bind_param("ssss", $name, $email, $hashed_password, $role);
-      $stmt->execute();
+  // Check if the username is already taken
+  $sql = "SELECT * FROM users WHERE name=? OR email=?";
+  $stmt = $conn->prepare($sql);
+  $stmt->bind_param("ss", $name, $email);
+  $stmt->execute();
+  $result = $stmt->get_result();
 
-      echo "User registered successfully!";
-      // Redirect to LoginPage.html
-      header("Location: ../html/LoginPage.html");
-      exit();
-    } else {
-      echo "Passwords do not match!";
-    }
+  if ($result->num_rows > 0) {
+    // Username is already taken
+    echo "Username or email is already taken!";
   } else {
-    echo "Password must be at least 8 characters long!";
+    if (strlen($password) >= 8) { // Check password length
+      if ($password == $cpassword) {
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+        $sql = "INSERT INTO users (name, email, password, role) VALUES (?,?,?,?)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ssss", $name, $email, $hashed_password, $role);
+        $stmt->execute();
+        
+        // Redirect to LoginPage.html
+        header("Location: ../html/LoginPage.html");
+        exit();
+      } else {
+          echo "Passwords do not match!";
+      }
+    } else {
+        echo "Password must be at least 8 characters long!";
+    }
   }
 }
 
 // User Login
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["login"])) {
-  $email = $_POST["email"];
-  $password = $_POST["password"];
+  $email = htmlspecialchars($_POST["email"]);
+  $password = htmlspecialchars($_POST["password"]);
+
+  if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
+    $emailErr = "Invalid email format";
+  }
 
   $sql = "SELECT * FROM users WHERE email=?";
   $stmt = $conn->prepare($sql);
@@ -62,7 +81,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["login"])) {
       $_SESSION['username'] = $user['name'];
       $_SESSION['role'] = $user['role'];
 
-      // Password is correct, login successful
       // Check user role and redirect accordingly
       if ($user['role'] == 'Company') {
         // Redirect to CompanyHomePage.html
@@ -78,8 +96,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["login"])) {
       echo "Invalid email or password!";
     }
   } else {
-    // User with provided email not found
-    echo "Invalid email or password!";
+    header('Location: https://youtu.be/QvsQ9hYKq7c?si=Kb4wvJCuT3HkNu3G');
   }
 }
 
