@@ -32,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["register"])) {
                     $stmt->execute();
                     $result = $stmt->get_result();
 
-                    if ($result->num_rows > 0) {
+                    if ($result->num_rows == 1) {
                         echo "Username or email is already taken!";
                     } else {
                         // Insert new user
