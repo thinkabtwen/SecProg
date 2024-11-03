@@ -37,24 +37,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["register"])) {
     // Username is already taken
     echo "Username or email is already taken!";
   } else {
-    if (strlen($password) >= 8) { // Check password length
-      if ($password == $cpassword) {
-        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-
-        $sql = "INSERT INTO users (name, email, password, role) VALUES (?,?,?,?)";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssss", $name, $email, $hashed_password, $role);
-        $stmt->execute();
-        
-        // Redirect to LoginPage.html
-        header("Location: ../html/LoginPage.html");
-        exit();
+    if(preg_match("/^[a-zA-Z0-9]*$/", $name)){
+      if (strlen($password) >= 8) { // Check password length 
+        if ($password == $cpassword) {
+          $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+  
+          $sql = "INSERT INTO users (name, email, password, role) VALUES (?,?,?,?)";
+          $stmt = $conn->prepare($sql);
+          $stmt->bind_param("ssss", $name, $email, $hashed_password, $role);
+          $stmt->execute();
+          
+          // Redirect to LoginPage.html
+          header("Location: ../html/LoginPage.html");
+          exit();
+        } else {
+            echo "Passwords do not match!";
+        }
       } else {
-          echo "Passwords do not match!";
+          echo "Password must be at least 8 characters long!";
       }
-    } else {
-        echo "Password must be at least 8 characters long!";
-    }
+    }else{
+      echo "Username can only contain alphanumeric";
+    } 
   }
 }
 
