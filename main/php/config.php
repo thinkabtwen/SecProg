@@ -16,11 +16,11 @@ if ($conn->connect_error) {
 
 // Register user
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["register"])) {
-  $name = htmlspecialchars($_POST["name"]);
-  $email = htmlspecialchars($_POST["email"]);
+  $name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING);
+  $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
   $password = ($_POST["password"]);
   $cpassword = ($_POST["cpassword"]);
-  $role = htmlspecialchars($_POST["role"]);
+  $role = filter_input(INPUT_POST, 'role', FILTER_SANITIZE_STRING);
 
   if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
     $emailErr = "Invalid email format";
@@ -60,7 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["register"])) {
 
 // User Login
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["login"])) {
-  $email = htmlspecialchars($_POST["email"]);
+  $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
   $password = ($_POST["password"]);
 
   if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
