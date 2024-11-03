@@ -17,7 +17,7 @@ $username = htmlspecialchars($_SESSION['username']);
 <body>
     <section class="container">
         <div class="center">
-            <h1>Welcome back, <?php echo $username; ?>!</h1>
+            <h1>Welcome back, <?php echo htmlspecialchars($username); ?>!</h1>
         </div>
 
         <div class="container-content">
