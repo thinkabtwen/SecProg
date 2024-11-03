@@ -96,7 +96,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["login"])) {
       echo "Invalid email or password!";
     }
   } else {
-    header('Location: https://youtu.be/QvsQ9hYKq7c?si=Kb4wvJCuT3HkNu3G');
+      echo "Invalid email or password!";
   }
 }
 

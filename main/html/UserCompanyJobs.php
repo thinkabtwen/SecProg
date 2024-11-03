@@ -1,26 +1,13 @@
 <?php
 session_start();
+include '../php/config.php';
 if (!isset($_SESSION['username'])) {
     // Redirect to login page if not logged in
     header("Location: ../html/LoginPage.html");
     exit();
 }
 
-$username = $_SESSION['username'];
-
-// Database connection details
-$servername = "localhost";
-$db_username = "root";
-$db_password = "";
-$dbname = "cyber_resource";
-
-// Create a connection
-$conn = new mysqli($servername, $db_username, $db_password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+$username = htmlspecialchars($_SESSION['username']);
 
 // Fetch all job listings from the database
 $sql = "SELECT username, job_title, location, job_description, job_type, salary, benefits FROM job_listings";

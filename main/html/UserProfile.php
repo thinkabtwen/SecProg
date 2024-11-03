@@ -1,26 +1,13 @@
 <?php
 session_start();
+include '../php/config.php';
 if (!isset($_SESSION['username'])) {
     // Redirect to login page if not logged in
     header("Location: ../html/LoginPage.html");
     exit();
 }
 
-$username = $_SESSION['username'];
-
-// Database connection settings
-$servername = "localhost"; 
-$db_username = "root"; 
-$db_password = ""; 
-$db_name = "cyber_resource"; 
-
-// Create connection
-$conn = new mysqli($servername, $db_username, $db_password, $db_name);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+$username = htmlspecialchars($_SESSION['username']);
 
 // Fetch user details
 $sql = "SELECT name, email FROM users WHERE name = ?";
