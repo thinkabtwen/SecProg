@@ -1,13 +1,14 @@
 <?php
-session_start();
 include '../php/config.php';
+session_start();
+
 if (!isset($_SESSION['username'])) {
     // Redirect to login page if not logged in
     header("Location: ../html/LoginPage.html");
     exit();
 }
 
-$username = htmlspecialchars($_SESSION['username']);
+$username = $_SESSION['username'];
 
 // Fetch user details
 $sql = "SELECT name, email FROM users WHERE name = ?";
@@ -24,9 +25,6 @@ if ($result->num_rows > 0) {
     $name = "Not available";
     $email = "Not available";
 }
-
-$stmt->close();
-$conn->close();
 ?>
 
 <html>
@@ -45,15 +43,15 @@ $conn->close();
         <div class="col-md-4 text-center mt-5">
             <img src="../../Image/default_profile.jpg" class="img-fluid rounded" alt="logo">
             <div>
-                <a href="./CompanyProfileEdit.html"><button class="mx-auto m-1 btn-lg btn btn-primary">Update Profile</button></a>
+                <a href="./CompanyProfileEdit.php"><button class="mx-auto m-1 btn-lg btn btn-primary">Update Profile</button></a>
             </div>
         </div>
         <div class="col-md-8">
-            <div class="h2">User Profile</div>
+            <div class="h2">User  Profile</div>
             <table class="container-fluid table table-striped">
-                <tr><th colspan="2">User Details:</th></tr>
+                <tr><th colspan="2">User  Details:</th></tr>
                 <tr><th><i class="fa fa-user-circle"></i> Company Name</th><td><?php echo htmlspecialchars($name); ?></td></tr>
-                <tr><th><i class="fa fa-envelope"></i> Company Email</th><td><?php echo htmlspecialchars(string: $email); ?></td></tr>
+                <tr><th><i class="fa fa-envelope"></i> Company Email</th><td><?php echo htmlspecialchars($email); ?></td></tr>
                 <tr><th><i class="fa fa-briefcase"></i> Company Specialization</th><td>IT</td></tr>
                 <tr><th><i class="fa fa-home"></i> Address</th><td>alamat</td></tr>            
             </table>
