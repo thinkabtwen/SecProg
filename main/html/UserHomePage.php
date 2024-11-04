@@ -46,6 +46,13 @@ $username = htmlspecialchars($_SESSION['username']);
                 <h3>Your Profile</h3>
                 <h5>View and edit your personal profile</h5>
             </div>
+
+            <div class="box">
+                <form action="../php/config.php" method="post" enctype="multipart/form-data">
+                    <input type="submit" name="logout" value="LOGOUT" class="btn">
+                </form>
+                
+            </div>  
             
         </div>
     </section>
