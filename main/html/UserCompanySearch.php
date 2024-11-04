@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../php/config.php';
+require '../php/config.php';
 if (!isset($_SESSION['username'])) {
     // Redirect to login page if not logged in
     header("Location: ../html/LoginPage.html");

@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../php/config.php';
+require '../php/config.php';
 if (!isset($_SESSION['username'])) {
   header("Location: ../html/LoginPage.html");
   exit();
@@ -12,7 +12,7 @@ $username = htmlspecialchars($_SESSION['username']);
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Sanitize user inputs to prevent XSS
-    $jobTitle = filter_input(INPUT_POST, 'jobtitle', FILTER_SANITIZE_STRING);
+    $jobTitle = filter_input(INPUT_POST, 'jobTitle', FILTER_SANITIZE_STRING);
     $location = filter_input(INPUT_POST, 'location', FILTER_SANITIZE_STRING);
     $jobDescription = filter_input(INPUT_POST, 'jobDescription', FILTER_SANITIZE_STRING);
     $jobType = filter_input(INPUT_POST, 'jobType', FILTER_SANITIZE_STRING);
@@ -21,7 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Server-side validation
     if (empty($jobTitle) || empty($jobDescription) || empty($jobType)) {
-        $error_message = "Please fill in all required fields.";
+        echo "Please fill in all required fields.";
     } else {
         // Prevent SQL injection
         $stmt = $conn->prepare("INSERT INTO job_listings (username, job_title, location, job_description, job_type, salary, benefits) VALUES (?, ?, ?, ?, ?, ?, ?)");
@@ -29,9 +29,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Execute the query
         if ($stmt->execute()) {
-            $success_message = "Job listing created successfully!";
+            echo "Job listing created successfully!";
         } else {
-            $error_message = "Error: " . htmlspecialchars($stmt->error, ENT_QUOTES, 'UTF-8');
+            echo "Error create new job listings";
         }
 
         // Close the statement and connection

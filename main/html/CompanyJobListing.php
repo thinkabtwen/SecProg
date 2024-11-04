@@ -7,7 +7,7 @@ if (!isset($_SESSION['username'])) {
   exit();
 }
 
-$username = htmlspecialchars($_SESSION['username']);
+$username = $_SESSION['username'];
 
 
 // Prepare the SQL query to get job listings for the logged-in user
