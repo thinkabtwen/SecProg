@@ -11,7 +11,7 @@ $username = $_SESSION['username'];
 
 
 // Prepare the SQL query to get job listings for the logged-in user
-$sql = "SELECT job_title, location, job_description, job_type, salary, benefits FROM job_listings WHERE username = ?";
+$sql = "SELECT id, job_title, location, job_description, job_type, salary, benefits FROM job_listings WHERE username = ?";
 $stmt = $conn->prepare($sql);
 
 // Check if the statement preparation was successful
@@ -56,6 +56,7 @@ $conn->close();
       <ul class="nav nav-pills nav-stacked">
         <li><a href="./CompanyJobListingCreation.php">Create Listings</a></li>
         <li class="active"><a href="./CompanyJobListing.php">Your Listings</a></li>
+        <li><a href="./CompanyApprovedJobListing.php">Approved Listings</a></li>
       </ul><br>
       <div class="input-group">
         <input type="text" class="form-control" placeholder="Search Your Listings..">
@@ -80,6 +81,13 @@ $conn->close();
               echo '<p>Location: ' . htmlspecialchars($row["location"], ENT_QUOTES, 'UTF-8') . '</p>';
               echo '<p>Jangkauan Gaji: ' . htmlspecialchars($row["salary"], ENT_QUOTES, 'UTF-8') . '</p>';
               echo '<p>Benefits: ' . htmlspecialchars($row["benefits"], ENT_QUOTES, 'UTF-8') . '</p>';
+
+             // Delete button form
+              echo '<form method="POST" action="../php/config.php" style="display:inline;">';
+              echo '<input type="hidden" name="jobs_id" value="' . htmlspecialchars($row["id"], ENT_QUOTES, 'UTF-8') . '">';
+              echo '<button type="submit" name="delete-from-company" class="btn btn-danger">Delete</button>';
+              echo '</form>';
+
               echo '<hr><br>';
           }
       } else {

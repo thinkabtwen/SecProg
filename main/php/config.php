@@ -129,6 +129,18 @@ function deleteJobListing($conn, $job_id) {
     return false;
 }
 
+function companyDeleteJobListing($conn, $jobs_id) {
+    $sql = "DELETE FROM job_listings WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    if ($stmt) {
+        $stmt->bind_param("i", $jobs_id);
+        $stmt->execute();
+        $stmt->close();
+        return true;
+    }
+    return false;
+}
+
 function deleteUsers($conn, $user_id){
     $sql = "DELETE FROM users WHERE id = ? AND role = 'Customer'";
     $stmt = $conn->prepare($sql);
@@ -153,7 +165,6 @@ function deleteCompany($conn, $company_id){
     return false;
 }
 
-// Function to approve a job listing
 // Function to approve a job listing
 function approveJobListing($conn, $job_id) {
     // Get job details from `job_listings` table
@@ -204,6 +215,19 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['job_id']) && isset($_
         echo "Error deleting listing.";
     }
 }
+
+// Company delete own job listing
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['jobs_id']) && isset($_POST['delete-from-company']) && isset($_SESSION['username']) && $_SESSION['role'] === 'Company') {
+    $jobs_id = htmlspecialchars($_POST['jobs_id']);
+    if (companyDeleteJobListing($conn, $jobs_id)) {
+        $conn->close();
+        header("Location: ../html/CompanyJobListing.php"); 
+        exit();
+    } else {
+        echo "Error deleting listing.";
+    }
+}
+
 
 
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['user_id']) && isset($_SESSION['username']) && $_SESSION['role'] === 'admin') {
