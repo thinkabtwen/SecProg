@@ -84,9 +84,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["login"])) {
                 if ($user['role'] == 'Company') {
                     header("Location: ../html/CompanyHomePage.php");
                     exit();
-                } elseif ($user['role'] == 'Customer') {
+                } else if ($user['role'] == 'Customer') {
                     header("Location: ../html/UserHomePage.php");
                     exit();
+                } else if($user['role'] == 'admin'){
+                    header("Location: ../html/adminpanel.php");
                 }
             } else {
                 echo "Invalid email or password!";
@@ -114,4 +116,128 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['logout'])){
     header("Location: ../html/LoginPage.html");
 }
 
+// Function to delete a job listing
+function deleteJobListing($conn, $job_id) {
+    $sql = "DELETE FROM job_listings WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    if ($stmt) {
+        $stmt->bind_param("i", $job_id);
+        $stmt->execute();
+        $stmt->close();
+        return true;
+    }
+    return false;
+}
+
+function deleteUsers($conn, $user_id){
+    $sql = "DELETE FROM users WHERE id = ? AND role = 'Customer'";
+    $stmt = $conn->prepare($sql);
+    if ($stmt) {
+        $stmt->bind_param("i", $user_id);
+        $stmt->execute();
+        $stmt->close();
+        return true;
+    }
+    return false;
+}
+
+function deleteCompany($conn, $company_id){
+    $sql = "DELETE FROM users WHERE id = ? AND role = 'Company'";
+    $stmt = $conn->prepare($sql);
+    if ($stmt) {
+        $stmt->bind_param("i", $company_id);
+        $stmt->execute();
+        $stmt->close();
+        return true;
+    }
+    return false;
+}
+
+// Function to approve a job listing
+// Function to approve a job listing
+function approveJobListing($conn, $job_id) {
+    // Get job details from `job_listings` table
+    $sql = "SELECT * FROM job_listings WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    if ($stmt) {
+        $stmt->bind_param("i", $job_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        if ($result->num_rows == 1) {
+            $job = $result->fetch_assoc();
+
+            // Insert the job into `approved_job_listings` table
+            $sql_insert = "INSERT INTO approved_job_listings (id, username, job_title, location, job_description, job_type, salary, benefits) 
+                           VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            $stmt_insert = $conn->prepare($sql_insert);
+            if ($stmt_insert) {
+                $stmt_insert->bind_param("isssssss", $job['id'], $job['username'], $job['job_title'], $job['location'], 
+                                          $job['job_description'], $job['job_type'], $job['salary'], $job['benefits']);
+                $stmt_insert->execute();
+                $stmt_insert->close();
+                
+                // Delete the job from `job_listings` table
+                $sql_delete = "DELETE FROM job_listings WHERE id = ?";
+                $stmt_delete = $conn->prepare($sql_delete);
+                if ($stmt_delete) {
+                    $stmt_delete->bind_param("i", $job_id);
+                    $stmt_delete->execute();
+                    $stmt_delete->close();
+
+                    return true; // Successfully moved and deleted the job
+                }
+            }
+        }
+    }
+    return false; // Error occurred
+}
+
+// Delete logic
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['job_id']) && isset($_POST['delete']) && isset($_SESSION['username']) && $_SESSION['role'] === 'admin') {
+    $job_id = htmlspecialchars($_POST['job_id']);
+    if (deleteJobListing($conn, $job_id)) {
+        $conn->close();
+        header("Location: ../html/admin-reviewlistings.php"); 
+        exit();
+    } else {
+        echo "Error deleting listing.";
+    }
+}
+
+
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['user_id']) && isset($_SESSION['username']) && $_SESSION['role'] === 'admin') {
+    $user_id = htmlspecialchars($_POST['user_id']);
+
+    if (deleteUsers($conn, $user_id)) {
+        $conn->close();
+        header("Location: ../html/admin-reviewusers.php"); 
+        exit();
+    } else {
+        echo "Error deleting listing.";
+    }
+}
+
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['company_id']) && isset($_SESSION['username']) && $_SESSION['role'] === 'admin') {
+    $company_id = htmlspecialchars($_POST['company_id']);
+
+    if (deleteCompany($conn, $company_id)) {
+        $conn->close();
+        header("Location: ../html/admin-reviewcompany.php"); 
+        exit();
+    } else {
+        echo "Error deleting listing.";
+    }
+}
+
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['job_id']) && isset($_POST['approve']) && isset($_SESSION['username']) && $_SESSION['role'] === 'admin') {
+    $job_id = htmlspecialchars($_POST['job_id']);
+    if (approveJobListing($conn, $job_id)) {
+        $conn->close();
+        header("Location: ../html/admin-approvedlistings.php");
+        exit();
+    } else {
+        echo "Error approving listing.";
+    }
+}
 ?>

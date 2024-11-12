@@ -10,7 +10,7 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Customer') {
 $username = htmlspecialchars($_SESSION['username']);
 
 // Fetch all job listings from the database
-$sql = "SELECT username, job_title, location, job_description, job_type, salary, benefits FROM job_listings";
+$sql = "SELECT username, job_title, location, job_description, job_type, salary, benefits FROM approved_job_listings";
 $result = $conn->query($sql);
 ?>
 

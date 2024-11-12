@@ -26,7 +26,7 @@ $username = htmlspecialchars($_SESSION['username']);
                     <img src="../../Image/hook.png">
                 </a>
                 <h3>Company Job Listing</h3>
-                <h5>Create Jobs and view other company available jobs</h5>
+                <h5>Create Jobs</h5>
             </div>
             
 
@@ -43,7 +43,7 @@ $username = htmlspecialchars($_SESSION['username']);
                     <img src="../../Image/officebuildingicons.png">
                 </a>
                 <h3>Company Profile</h3>
-                <h5>Create your company profile and view other companies too</h5>
+                <h5>Create your company profile</h5>
             </div>  
 
             <div class="box">
