@@ -2,11 +2,11 @@
 require '../php/config.php';
 session_start();
 
-if (!isset($_SESSION['username'])) {
+if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Company') {
     // Redirect to login page if not logged in
     header("Location: ../html/LoginPage.html");
     exit();
-}
+  }
 
 $username = $_SESSION['username'];
 

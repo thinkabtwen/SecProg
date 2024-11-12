@@ -1,6 +1,6 @@
 <?php
 session_start();
-if (!isset($_SESSION['username'])) {
+if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Company') {
   // Redirect to login page if not logged in
   header("Location: ../html/LoginPage.html");
   exit();
@@ -48,7 +48,7 @@ $username = htmlspecialchars($_SESSION['username']);
 
             <div class="box">
                 <form action="../php/config.php" method="post" enctype="multipart/form-data">
-                    <input type="submit" name="logout" value="logout" class="btn">
+                    <input type="submit" name="logout" value="LOGOUT" class="btn">
                 </form>
                 
             </div>  

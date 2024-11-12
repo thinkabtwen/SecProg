@@ -1,7 +1,8 @@
 <?php
 session_start();
 require '../php/config.php';
-if (!isset($_SESSION['username'])) {
+if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Company') {
+  // Redirect to login page if not logged in
   header("Location: ../html/LoginPage.html");
   exit();
 }

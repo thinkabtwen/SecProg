@@ -1,9 +1,9 @@
 <?php
 session_start();
-if (!isset($_SESSION['username'])) {
-  // Redirect to login page if not logged in
-  header("Location: ../html/LoginPage.html");
-  exit();
+if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Company') {
+    // Redirect to login page if not logged in
+    header("Location: ../html/LoginPage.html");
+    exit();
 }
 
 $username = htmlspecialchars($_SESSION['username']);
