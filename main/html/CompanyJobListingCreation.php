@@ -23,7 +23,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Server-side validation
     if (empty($jobTitle) || empty($jobDescription) || empty($jobType)) {
         echo "Please fill in all required fields.";
-    } else {
+    } else if(!preg_match("/^[a-zA-Z ]*$/", $jobTitle)){
+      echo "Job title can only contain alphabet characters";
+    } else if(!preg_match("/^[a-zA-Z0-9.\/ ]*$/", $location)){
+      echo "Location can only contain alphanumeric characters";
+    } else if(!preg_match("/^[a-zA-Z0-9 ]*$/", $jobDescription)){
+      echo "Job description can only contain alphanumeric characters";
+    }else if(!preg_match("/^[a-zA-Z-]*$/", $jobType)){
+      echo "Job type can only contain alphabet characters";
+    }else if(!preg_match("/^[0-9.,]*$/", $salary)){
+      echo "Salary can only contain numeric characters";
+    }else if (!preg_match("/^[a-zA-Z0-9. ]*$/", $benefits)){
+      echo "Job benefits can only contain alphanumeric characters";
+    }else {
         // Prevent SQL injection
         $stmt = $conn->prepare("INSERT INTO job_listings (username, job_title, location, job_description, job_type, salary, benefits) VALUES (?, ?, ?, ?, ?, ?, ?)");
         $stmt->bind_param("sssssss", $username, $jobTitle, $location, $jobDescription, $jobType, $salary, $benefits);
@@ -91,7 +103,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
         <div class="form-group">
           <label for="salary">Jangkauan Gaji*:</label>
-          <input type="text" id="salary" name="salary">
+          <input type="number" id="salary" name="salary">
         </div>
         <div class="form-group">
           <label for="benefits">Benefit*:</label>
