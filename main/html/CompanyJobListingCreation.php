@@ -2,7 +2,6 @@
 session_start();
 require '../php/config.php';
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Company') {
-  // Redirect to login page if not logged in
   header("Location: ../html/LoginPage.html");
   exit();
 }
@@ -36,11 +35,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }else if (!preg_match("/^[a-zA-Z0-9. ]*$/", $benefits)){
       echo "Job benefits can only contain alphanumeric characters";
     }else {
-        // Prevent SQL injection
         $stmt = $conn->prepare("INSERT INTO job_listings (username, job_title, location, job_description, job_type, salary, benefits) VALUES (?, ?, ?, ?, ?, ?, ?)");
         $stmt->bind_param("sssssss", $username, $jobTitle, $location, $jobDescription, $jobType, $salary, $benefits);
 
-        // Execute the query
         if ($stmt->execute()) {
             echo "Job listing created successfully!";
         } else {

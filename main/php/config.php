@@ -115,8 +115,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['logout'])){
     session_destroy();
     header("Location: ../html/LoginPage.html");
 }
-
-// Function to delete a job listing
 function deleteJobListing($conn, $job_id) {
     $sql = "DELETE FROM job_listings WHERE id = ?";
     $stmt = $conn->prepare($sql);
@@ -165,9 +163,7 @@ function deleteCompany($conn, $company_id){
     return false;
 }
 
-// Function to approve a job listing
 function approveJobListing($conn, $job_id) {
-    // Get job details from `job_listings` table
     $sql = "SELECT * FROM job_listings WHERE id = ?";
     $stmt = $conn->prepare($sql);
     if ($stmt) {
@@ -188,7 +184,6 @@ function approveJobListing($conn, $job_id) {
                 $stmt_insert->execute();
                 $stmt_insert->close();
                 
-                // Delete the job from `job_listings` table
                 $sql_delete = "DELETE FROM job_listings WHERE id = ?";
                 $stmt_delete = $conn->prepare($sql_delete);
                 if ($stmt_delete) {
@@ -196,12 +191,12 @@ function approveJobListing($conn, $job_id) {
                     $stmt_delete->execute();
                     $stmt_delete->close();
 
-                    return true; // Successfully moved and deleted the job
+                    return true; 
                 }
             }
         }
     }
-    return false; // Error occurred
+    return false; 
 }
 
 // Delete logic

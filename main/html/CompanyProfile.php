@@ -3,14 +3,11 @@ require '../php/config.php';
 session_start();
 
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Company') {
-    // Redirect to login page if not logged in
     header("Location: ../html/LoginPage.html");
     exit();
   }
 
 $username = $_SESSION['username'];
-
-// Fetch user details
 $sql = "SELECT name, email FROM users WHERE name = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $username);

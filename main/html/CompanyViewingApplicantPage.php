@@ -2,14 +2,11 @@
 session_start();
 require '../php/config.php';
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Company') {
-    // Redirect to login page if not logged in
     header("Location: ../html/LoginPage.html");
     exit();
 }
 
 $username = htmlspecialchars($_SESSION['username']);
-
-// Fetch all job listings from the database
 $sql = "SELECT id, name, email, age, gender FROM users WHERE role = 'Customer'";
 $result = $conn->query($sql);
 ?>
@@ -67,8 +64,6 @@ $result = $conn->query($sql);
             } else {
                 echo '<p>No applicants found.</p>';
             }
-
-            // Close the connection
             $conn->close();
             ?>
             <a href="./CompanyHomePage.php">

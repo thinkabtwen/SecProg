@@ -2,19 +2,15 @@
 session_start();
 require '../php/config.php';
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Customer') {
-  // Redirect to login page if not logged in
   header("Location: ../html/LoginPage.html");
   exit();
 }
 
 $username = htmlspecialchars($_SESSION['username']);
-
-// Fetch all companies from the database
 $sql = "SELECT name, address, CompanySpecialization FROM users WHERE role = 'Company'";
 $result = $conn->query($sql);
 ?>
 
-<!-- UserCompanySearch.css -->
 <html lang="en">
 <head>
   <title>User Jobs Search</title>
@@ -55,7 +51,6 @@ $result = $conn->query($sql);
 
       <?php
       if ($result->num_rows > 0) {
-          // Output each company
           while ($row = $result->fetch_assoc()) {
               echo '<h2>' . htmlspecialchars($row["name"], ENT_QUOTES, 'UTF-8') . '</h2>';
               echo '<p>Address: ' . htmlspecialchars($row["address"], ENT_QUOTES, 'UTF-8') . '</p>';
@@ -67,7 +62,6 @@ $result = $conn->query($sql);
           echo '<p>No companies found.</p>';
       }
 
-      // Close connection
       $conn->close();
       ?>
       <a href="./UserHomePage.php">

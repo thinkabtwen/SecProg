@@ -2,14 +2,11 @@
 session_start();
 require '../php/config.php';
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Customer') {
-    // Redirect to login page if not logged in
     header("Location: ../html/LoginPage.html");
     exit();
 }
 
 $username = htmlspecialchars($_SESSION['username']);
-
-// Fetch all job listings from the database
 $sql = "SELECT username, job_title, location, job_description, job_type, salary, benefits FROM approved_job_listings";
 $result = $conn->query($sql);
 ?>
@@ -55,7 +52,6 @@ $result = $conn->query($sql);
 
             <?php
             if ($result->num_rows > 0) {
-                // Output each job listing
                 while ($row = $result->fetch_assoc()) {
                   echo '<h2>' . htmlspecialchars($row["job_title"], ENT_QUOTES, 'UTF-8') . '</h2>';
                   echo '<h5><span class="label label-primary">' . htmlspecialchars($row["job_type"], ENT_QUOTES, 'UTF-8') . '</span></h5><br>';
@@ -69,8 +65,7 @@ $result = $conn->query($sql);
             } else {
                 echo '<p>No job listings available at the moment.</p>';
             }
-
-            // Close the connection
+            
             $conn->close();
             ?>
             <a href="./UserHomePage.php">

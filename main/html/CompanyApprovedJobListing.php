@@ -2,33 +2,26 @@
 session_start();
 require '../php/config.php';
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Company') {
-  // Redirect to login page if not logged in
   header("Location: ../html/LoginPage.html");
   exit();
 }
 
 $username = $_SESSION['username'];
 
-
-// Prepare the SQL query to get job listings for the logged-in user
 $sql = "SELECT job_title, location, job_description, job_type, salary, benefits FROM approved_job_listings WHERE username = ?";
 $stmt = $conn->prepare($sql);
 
-// Check if the statement preparation was successful
 if ($stmt === false) {
     die("Prepare failed: " . $conn->error);
 }
 
-// Bind the username parameter and execute the query
 $stmt->bind_param("s", $username);
 if (!$stmt->execute()) {
     die("Execute failed: " . $stmt->error);
 }
 
-// Get the result
 $result = $stmt->get_result();
 
-// Close the statement and connection after execution
 $stmt->close();
 $conn->close();
 ?>
