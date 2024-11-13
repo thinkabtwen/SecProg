@@ -73,6 +73,9 @@ $result = $conn->query($sql);
             // Close the connection
             $conn->close();
             ?>
+            <a href="./UserHomePage.php">
+            <label type="button" class="btn-lg btn-primary">Back</label>
+            </a>
         </div>
     </div>
 </div>

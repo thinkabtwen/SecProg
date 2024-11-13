@@ -46,8 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } else {
             echo "Error create new job listings";
         }
-
-        // Close the statement and connection
+        
         $stmt->close();
         $conn->close();
     }
@@ -71,7 +70,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <main class="main">
       <h2>Create Job Listing</h2>
 
-      <!-- Display success or error message with proper escaping -->
       <?php if (!empty($success_message)): ?>
         <p style="color:green;"><?php echo htmlspecialchars($success_message, ENT_QUOTES, 'UTF-8'); ?></p>
       <?php elseif (!empty($error_message)): ?>

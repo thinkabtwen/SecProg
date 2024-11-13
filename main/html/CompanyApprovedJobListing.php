@@ -57,6 +57,7 @@ $conn->close();
         <li><a href="./CompanyJobListingCreation.php">Create Listings</a></li>
         <li><a href="./CompanyJobListing.php">Your Listings</a></li>
         <li class="active"><a href="./CompanyApprovedJobListing.php">Approved Listings</a></li>
+        <li><a href="./CompanyViewingApplicantPage.php">View Applicant</a></li>
       </ul><br>
       <div class="input-group">
         <input type="text" class="form-control" placeholder="Search Your Listings..">

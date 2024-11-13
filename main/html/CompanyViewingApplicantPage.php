@@ -1,74 +1,86 @@
 <?php
 session_start();
+require '../php/config.php';
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Company') {
-  // Redirect to login page if not logged in
-  header("Location: ../html/LoginPage.html");
-  exit();
+    // Redirect to login page if not logged in
+    header("Location: ../html/LoginPage.html");
+    exit();
 }
 
 $username = htmlspecialchars($_SESSION['username']);
+
+// Fetch all job listings from the database
+$sql = "SELECT id, name, email, age, gender FROM users WHERE role = 'Customer'";
+$result = $conn->query($sql);
 ?>
 
-<!DOCTYPE html>
+<html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>View Applicant Page</title>
-  <link rel="stylesheet" href="../css/CompanyViewingApplicantPageStyle.css">
+  <title>User Company Jobs</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../css/UserCompanyJobs.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 </head>
 <body>
-  <div class="container">
-    <header class="header">
-      <img src="../../Image/logo.png" alt="Website Logo">
-      <h4>CYBER <br> RESOURCE</h4>
-    </header>
-    <div class="content">
-      <div class="sidebar">
-        <h2>Search Applicants</h2>
-        <input type="text" placeholder="Search Name">
-        <select name="category">
-          <option value="">Applicant Category</option>
-          <option value="developer">Developer</option>
-          <option value="designer">Designer</option>
-          <option value="manager">Manager</option>
-        </select>
-        <input type="number" placeholder="Sort Salary (Low to High)">
-        <input type="number" placeholder="Min Years of Experience">
+
+<div class="container-fluid">
+  <div class="row content">
+    <div class="col-sm-3 sidenav">
+      <div class="container-fluid p-5 bg-primary text-white text-left pd">
+        <h1>Cyber <span>Resource</span></h1>
+        <p>We make hiring easy</p>
       </div>
-      <div class="applicant-list">
-        <div class="applicant">
-          <div class="applicant-info">
-            <h3>Applicant #1</h3>
-            <a href="./CompanyViewingSpecificApplicantPage.php">
-              <img src="../../Image/default_profile.jpg" alt="Applicant Profile">
-            </a>
-            <p>Applicant Type: Full-Time</p>
-            <p>Name: John Doe</p>
-            <p>Address:</p>
-            <p>Contact Information:</p>
-            <p>Area of Expertise:</p>
-            <p>Soft Skills:</p>
-            <p>Miscellaneous:</p>
-            <br>
-            <h3>Applicant #2</h3>
-            <a href="./CompanyViewingSpecificApplicantPage.php">
-              <img src="../../Image/default_profile.jpg" alt="Applicant Profile">
-            </a>
-            <p>Applicant Type:</p>
-            <p>Name:</p>
-            <p>Address:</p>
-            <p>Contact Information:</p>
-            <p>Area of Expertise:</p>
-            <p>Soft Skills:</p>
-            <p>Miscellaneous:</p>
-          </div>
-        </div>
-        <a href="./CompanyHomePage.php">
-          <label type="button" class="btn-lg btn-primary">Back</label>
-        </a>
+      <hr>
+      <ul class="nav nav-pills nav-stacked">
+        <li><a href="./CompanyJobListingCreation.php">Create Listings</a></li>
+        <li><a href="./CompanyJobListing.php">Your Listings</a></li>
+        <li><a href="./CompanyApprovedJobListing.php">Approved Listings</a></li>
+        <li class="active"><a href="./CompanyViewingApplicantPage.php">View Applicant</a></li>
+      </ul><br>
+      <div class="input-group">
+        <input type="text" class="form-control" placeholder="Search Your Listings..">
+        <span class="input-group-btn">
+          <button class="btn btn-default" type="button">
+            <span class="glyphicon glyphicon-search"></span>
+          </button>
+        </span>
       </div>
     </div>
-  </div>
+
+        <div class="col-sm-9">
+            <h4><small>View All Applicant</small></h4>
+            <hr>
+
+            <?php
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                  echo '<h2>' . htmlspecialchars($row["name"], ENT_QUOTES, 'UTF-8') . '</h2>';
+                  echo '<p>Email: ' . htmlspecialchars($row["email"], ENT_QUOTES, 'UTF-8') . '</p>'; 
+                  echo '<p>Age: ' . htmlspecialchars($row["age"], ENT_QUOTES, 'UTF-8') . '</p>';
+                  echo '<p>Gender: ' . htmlspecialchars($row["gender"], ENT_QUOTES, 'UTF-8') . '</p>';
+                  echo '<hr>';
+              }
+            } else {
+                echo '<p>No applicants found.</p>';
+            }
+
+            // Close the connection
+            $conn->close();
+            ?>
+            <a href="./CompanyHomePage.php">
+            <label type="button" class="btn-lg btn-primary">Back</label>
+            </a>
+        </div>
+    </div>
+</div>
+
+<footer class="container-fluid">
+    <p>Cyber Resource</p>
+</footer>
+
 </body>
 </html>

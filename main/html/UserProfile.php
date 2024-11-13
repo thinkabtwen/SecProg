@@ -60,6 +60,9 @@ $conn->close();
                 <tr><th><i class="fa fa-home"></i> Address</th><td>email.@email.com</td></tr>            
             </table>
         </div>
+        <a href="./UserHomePage.php">
+            <label type="button" class="btn-lg btn-primary">Back</label>
+        </a>
     </div>
     
 </body>

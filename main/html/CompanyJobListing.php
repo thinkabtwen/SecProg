@@ -57,6 +57,7 @@ $conn->close();
         <li><a href="./CompanyJobListingCreation.php">Create Listings</a></li>
         <li class="active"><a href="./CompanyJobListing.php">Your Listings</a></li>
         <li><a href="./CompanyApprovedJobListing.php">Approved Listings</a></li>
+        <li><a href="./CompanyViewingApplicantPage.php">View Applicant</a></li>
       </ul><br>
       <div class="input-group">
         <input type="text" class="form-control" placeholder="Search Your Listings..">
@@ -72,9 +73,7 @@ $conn->close();
       <h2>Your Job Listings</h2>
 
       <?php
-      // Check if there are any job listings
       if ($result->num_rows > 0) {
-          // Loop through and display each job listing
           while ($row = $result->fetch_assoc()) {
               echo '<h2>' . htmlspecialchars($row["job_title"], ENT_QUOTES, 'UTF-8') . '</h2>';
               echo '<h5><span class="glyphicon glyphicon-time"></span> ' . htmlspecialchars($row["job_type"], ENT_QUOTES, 'UTF-8') . '</h5>';

@@ -10,7 +10,7 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Customer') {
 $username = htmlspecialchars($_SESSION['username']);
 
 // Fetch all companies from the database
-$sql = "SELECT name FROM users WHERE role = 'Company'";
+$sql = "SELECT name, address, CompanySpecialization FROM users WHERE role = 'Company'";
 $result = $conn->query($sql);
 ?>
 
@@ -58,6 +58,8 @@ $result = $conn->query($sql);
           // Output each company
           while ($row = $result->fetch_assoc()) {
               echo '<h2>' . htmlspecialchars($row["name"], ENT_QUOTES, 'UTF-8') . '</h2>';
+              echo '<p>Address: ' . htmlspecialchars($row["address"], ENT_QUOTES, 'UTF-8') . '</p>';
+              echo '<p>Company Specialization: ' . htmlspecialchars($row["CompanySpecialization"], ENT_QUOTES, 'UTF-8') . '</p>';
               echo '<p>Learn more about ' . htmlspecialchars($row["name"], ENT_QUOTES, 'UTF-8') . '</p>';
               echo '<hr>';
           }
@@ -68,6 +70,9 @@ $result = $conn->query($sql);
       // Close connection
       $conn->close();
       ?>
+      <a href="./UserHomePage.php">
+            <label type="button" class="btn-lg btn-primary">Back</label>
+      </a>
 
     </div>
   </div>
