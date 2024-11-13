@@ -47,7 +47,7 @@ $username = htmlspecialchars($_SESSION['username']);
 
             <div class="box">
                 <a href="./admin-approvedlistings.php">
-                    <img src="../../Image/officebuildingicons.png">
+                    <img src="../../Image/approvedicon.png">
                 </a>
                 <h3>Approved Listings</h3>
                 <h5>View approved job listings here</h5>
