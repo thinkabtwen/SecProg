@@ -20,7 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $benefits = filter_input(INPUT_POST, 'benefits', FILTER_SANITIZE_STRING);
 
     // Server-side validation
-    if (empty($jobTitle) || empty($jobDescription) || empty($jobType)) {
+    if (empty($jobTitle) || empty($location) || empty($jobDescription) || empty($jobType) || empty($salary) || empty($benefits)) {
         echo "Please fill in all required fields.";
     } else if(!preg_match("/^[a-zA-Z ]*$/", $jobTitle)){
       echo "Job title can only contain alphabet characters";
