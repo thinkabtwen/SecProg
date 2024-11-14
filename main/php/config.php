@@ -311,147 +311,283 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['job_id']) && isset($_
     }
 }
 
+
+
+
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["edit_profile"])) {
-    // Ensure the user is logged in and has the 'Customer' role
-    if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Customer') {
-        echo "Unauthorized access!";
-        exit();
-    }
+    if (isset($_POST['form_type'])) {
+        if ($_POST['form_type'] === 'customer_profile') {
+            if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Customer') {
+                echo "Unauthorized access!";
+                exit();
+            }
 
-    // Fetch current user data
-    $current_username = $_SESSION['username'];
-    $sql = "SELECT * FROM users WHERE name = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("s", $current_username);
-    $stmt->execute();
-    $result = $stmt->get_result();
+            // Fetch current user data
+            $current_username = $_SESSION['username'];
+            $sql = "SELECT * FROM users WHERE name = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("s", $current_username);
+            $stmt->execute();
+            $result = $stmt->get_result();
 
-    if ($result->num_rows !== 1) {
-        echo "User not found!";
-        exit();
-    }
+            if ($result->num_rows !== 1) {
+                echo "User not found!";
+                exit();
+            }
 
-    $user = $result->fetch_assoc();
+            $user = $result->fetch_assoc();
 
-    // Retrieve and sanitize inputs
-    $name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING);
-    $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
-    $age = filter_input(INPUT_POST, 'age', FILTER_VALIDATE_INT);
-    $gender = filter_input(INPUT_POST, 'gender', FILTER_SANITIZE_STRING);
-    $profession = filter_input(INPUT_POST, 'profession', FILTER_SANITIZE_STRING);
-    $address = filter_input(INPUT_POST, 'address', FILTER_SANITIZE_STRING);
-    $password = $_POST['password'] ?? '';
-    $confirm_password = $_POST['confirm_password'] ?? '';
+            // Retrieve and sanitize inputs
+            $name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING);
+            $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+            $age = filter_input(INPUT_POST, 'age', FILTER_VALIDATE_INT);
+            $gender = filter_input(INPUT_POST, 'gender', FILTER_SANITIZE_STRING);
+            $profession = filter_input(INPUT_POST, 'profession', FILTER_SANITIZE_STRING);
+            $address = filter_input(INPUT_POST, 'address', FILTER_SANITIZE_STRING);
+            $password = $_POST['password'] ?? '';
+            $confirm_password = $_POST['confirm_password'] ?? '';
 
-    // Initialize an array to hold errors
-    $errors = [];
+            // Initialize an array to hold errors
+            $errors = [];
 
-    // Validate email
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errors[] = "Invalid email format.";
-    }
+            // Validate email
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $errors[] = "Invalid email format.";
+            }
 
-    // Validate name (only allow alphanumeric and spaces)
-    if (!preg_match("/^[a-zA-Z0-9 ]*$/", $name)) {
-        $errors[] = "Name can only contain alphanumeric characters and spaces.";
-    }
+            // Validate name (only allow alphanumeric and spaces)
+            if (!preg_match("/^[a-zA-Z0-9 ]*$/", $name)) {
+                $errors[] = "Name can only contain alphanumeric characters and spaces.";
+            }
 
-    // Validate gender
-    $allowed_genders = ['Male', 'Female', 'Other'];
-    if (!in_array($gender, $allowed_genders)) {
-        $errors[] = "Invalid gender selected.";
-    }
+            // Validate gender
+            $allowed_genders = ['Male', 'Female', 'Other'];
+            if (!in_array($gender, $allowed_genders)) {
+                $errors[] = "Invalid gender selected.";
+            }
 
-    // Handle password change if provided
-    $hashed_password = null;
-    if (!empty($password)) {
-        if (strlen($password) < 8) {
-            $errors[] = "Password must be at least 8 characters long.";
-        }
-        if ($password !== $confirm_password) {
-            $errors[] = "Passwords do not match.";
-        }
-        if (empty($errors)) {
-            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-        }
-    }
+            // Handle password change if provided
+            $hashed_password = null;
+            if (!empty($password)) {
+                if (strlen($password) < 8) {
+                    $errors[] = "Password must be at least 8 characters long.";
+                }
+                if ($password !== $confirm_password) {
+                    $errors[] = "Passwords do not match.";
+                }
+                if (empty($errors)) {
+                    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+                }
+            }
 
-    // Handle profile image upload
-    $profile_image = $user['profile_image'];
-    if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
-        $file_tmp_path = $_FILES['profile_image']['tmp_name'];
-        $fileName = basename($_FILES['profile_image']['name']);
-        $file_size = $_FILES['profile_image']['size'];
-        $file_type = mime_content_type($file_tmp_path);
+            // Handle profile image upload
+            $profile_image = $user['profile_image'];
+            if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
+                $file_tmp_path = $_FILES['profile_image']['tmp_name'];
+                $fileName = basename($_FILES['profile_image']['name']);
+                $file_size = $_FILES['profile_image']['size'];
+                $file_type = mime_content_type($file_tmp_path);
 
-        // Allowed file types
-        $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
+                // Allowed file types
+                $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
 
-        if (!in_array($file_type, $allowed_types)) {
-            $errors[] = "Only JPG, PNG, and GIF files are allowed for profile images.";
-        }
+                if (!in_array($file_type, $allowed_types)) {
+                    $errors[] = "Only JPG, PNG, and GIF files are allowed for profile images.";
+                }
 
-        // Limit file size to 2MB
-        if ($file_size > 2 * 1024 * 1024) {
-            $errors[] = "Profile image size must be less than 2MB.";
-        }
+                // Limit file size to 2MB
+                if ($file_size > 2 * 1024 * 1024) {
+                    $errors[] = "Profile image size must be less than 2MB.";
+                }
 
-        if (empty($errors)) {
-            // Generate a unique file name to prevent overwriting
-            $upload_dir = '../uploads/';
-            $new_file_name = uniqid('profile_', true) . '.' . pathinfo($fileName, PATHINFO_EXTENSION);
-            $dest_path = $upload_dir . $new_file_name;
+                if (empty($errors)) {
+                    // Generate a unique file name to prevent overwriting
+                    $upload_dir = '../uploads/';
+                    $new_file_name = uniqid('profile_', true) . '.' . pathinfo($fileName, PATHINFO_EXTENSION);
+                    $dest_path = $upload_dir . $new_file_name;
 
-            // Move the file to the upload directory
-            if (move_uploaded_file($file_tmp_path, $dest_path)) {
-                // Optionally, delete the old profile image if it's not the default
-                if (!empty($profile_image) && $profile_image !== 'default_profile.jpg') {
-                    $old_image_path = $upload_dir . $profile_image;
-                    if (file_exists($old_image_path)) {
-                        unlink($old_image_path);
+                    // Move the file to the upload directory
+                    if (move_uploaded_file($file_tmp_path, $dest_path)) {
+                        // Optionally, delete the old profile image if it's not the default
+                        if (!empty($profile_image) && $profile_image !== 'default_profile.jpg') {
+                            $old_image_path = $upload_dir . $profile_image;
+                            if (file_exists($old_image_path)) {
+                                unlink($old_image_path);
+                            }
+                        }
+                        $uploaded_image_url = $upload_dir . $new_file_name;
+                        $profile_image = $uploaded_image_url;
+                    } else {
+                        $errors[] = "There was an error uploading the profile image.";
                     }
                 }
-                $uploaded_image_url = $upload_dir . $new_file_name;
-                $profile_image = $uploaded_image_url;
-            } else {
-                $errors[] = "There was an error uploading the profile image.";
+            }
+
+            if (empty($errors)) {
+                if ($hashed_password) {
+                    $sql = "UPDATE users SET name = ?, email = ?, age = ?, gender = ?, profession = ?, address = ?, password = ?, profile_image = ? WHERE name = ?";
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bind_param("ssissssss", $name, $email, $age, $gender, $profession, $address, $hashed_password, $profile_image, $current_username);
+                } else {
+                    $sql = "UPDATE users SET name = ?, email = ?, age = ?, gender = ?, profession = ?, address = ?, profile_image = ? WHERE name = ?";
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bind_param("ssisssss", $name, $email, $age, $gender, $profession, $address, $profile_image, $current_username);
+                }
+
+                if ($stmt->execute()) {
+                    if ($name !== $current_username) {
+                        $_SESSION['username'] = $name;
+                    }
+                    $stmt->close();
+                    $conn->close();
+                    header("Location: ../html/UserProfile.php?update=success");
+                    exit();
+                } else {
+                    $errors[] = "Error updating profile: " . $stmt->error;
+                    $stmt->close();
+                    $conn->close();
+                }
+                session_start();
+            }
+
+            // Display errors
+            if (!empty($errors)) {
+                foreach ($errors as $error) {
+                    echo "<p>" . htmlspecialchars($error) . "</p>";
+                }
+            }
+        } elseif ($_POST['form_type'] === 'company_profile') {
+            if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Company') {
+                echo "Unauthorized access!";
+                exit();
+            }
+
+            // Fetch current user data
+            $current_username = $_SESSION['username'];
+            $sql = "SELECT * FROM users WHERE name = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("s", $current_username);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            if ($result->num_rows !== 1) {
+                echo "User not found!";
+                exit();
+            }
+
+            $user = $result->fetch_assoc();
+
+            // Retrieve and sanitize inputs
+            $name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING);
+            $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+            $specialty = filter_input(INPUT_POST, 'CompanySpecialization', FILTER_SANITIZE_STRING);
+            $address = filter_input(INPUT_POST, 'address', FILTER_SANITIZE_STRING);
+            $password = $_POST['password'] ?? '';
+            $confirm_password = $_POST['confirm_password'] ?? '';
+
+            // Initialize an array to hold errors
+            $errors = [];
+
+            // Validate email
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $errors[] = "Invalid email format.";
+            }
+
+            // Validate name (only allow alphanumeric and spaces)
+            if (!preg_match("/^[a-zA-Z0-9 ]*$/", $name)) {
+                $errors[] = "Name can only contain alphanumeric characters and spaces.";
+            }
+
+            // Handle password change if provided
+            $hashed_password = null;
+            if (!empty($password)) {
+                if (strlen($password) < 8) {
+                    $errors[] = "Password must be at least 8 characters long.";
+                }
+                if ($password !== $confirm_password) {
+                    $errors[] = "Passwords do not match.";
+                }
+                if (empty($errors)) {
+                    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+                }
+            }
+
+            // Handle profile image upload
+            $profile_image = $user['profile_image'];
+            if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
+                $file_tmp_path = $_FILES['profile_image']['tmp_name'];
+                $fileName = basename($_FILES['profile_image']['name']);
+                $file_size = $_FILES['profile_image']['size'];
+                $file_type = mime_content_type($file_tmp_path);
+
+                // Allowed file types
+                $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
+
+                if (!in_array($file_type, $allowed_types)) {
+                    $errors[] = "Only JPG, PNG, and GIF files are allowed for profile images.";
+                }
+
+                // Limit file size to 2MB
+                if ($file_size > 2 * 1024 * 1024) {
+                    $errors[] = "Profile image size must be less than 2MB.";
+                }
+
+                if (empty($errors)) {
+                    // Generate a unique file name to prevent overwriting
+                    $upload_dir = '../uploads/';
+                    $new_file_name = uniqid('profile_', true) . '.' . pathinfo($fileName, PATHINFO_EXTENSION);
+                    $dest_path = $upload_dir . $new_file_name;
+
+                    // Move the file to the upload directory
+                    if (move_uploaded_file($file_tmp_path, $dest_path)) {
+                        // Optionally, delete the old profile image if it's not the default
+                        if (!empty($profile_image) && $profile_image !== 'default_profile.jpg') {
+                            $old_image_path = $upload_dir . $profile_image;
+                            if (file_exists($old_image_path)) {
+                                unlink($old_image_path);
+                            }
+                        }
+                        $uploaded_image_url = $upload_dir . $new_file_name;
+                        $profile_image = $uploaded_image_url;
+                    } else {
+                        $errors[] = "There was an error uploading the profile image.";
+                    }
+                }
+            }
+
+            if (empty($errors)) {
+                if ($hashed_password) {
+                    $sql = "UPDATE users SET name = ?, email = ?, CompanySpecialization = ?, address = ?, password = ?, profile_image = ? WHERE name = ?";
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bind_param("sssssss", $name, $email, $specialty, $address, $hashed_password, $profile_image, $current_username);
+                } else {
+                    $sql = "UPDATE users SET name = ?, email = ?, CompanySpecialization = ?, address = ?, profile_image = ? WHERE name = ?";
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bind_param("ssssss", $name, $email, $specialty, $address, $profile_image, $current_username);
+                }
+
+                if ($stmt->execute()) {
+                    if ($name !== $current_username) {
+                        $_SESSION['username'] = $name;
+                    }
+                    $stmt->close();
+                    $conn->close();
+                    header("Location: ../html/CompanyProfile.php?update=success");
+                    exit();
+                } else {
+                    $errors[] = "Error updating profile: " . $stmt->error;
+                    $stmt->close();
+                    $conn->close();
+                }
+                session_start();
+            }
+
+            // Display errors
+            if (!empty($errors)) {
+                foreach ($errors as $error) {
+                    echo "<p>" . htmlspecialchars($error) . "</p>";
+                }
             }
         }
     }
-
-    if (empty($errors)) {
-        if ($hashed_password) {
-            $sql = "UPDATE users SET name = ?, email = ?, age = ?, gender = ?, profession = ?, address = ?, password = ?, profile_image = ? WHERE name = ?";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("ssissssss", $name, $email, $age, $gender, $profession, $address, $hashed_password, $profile_image, $current_username);
-        } else {
-            $sql = "UPDATE users SET name = ?, email = ?, age = ?, gender = ?, profession = ?, address = ?, profile_image = ? WHERE name = ?";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("ssisssss", $name, $email, $age, $gender, $profession, $address, $profile_image, $current_username);
-        }
-
-        if ($stmt->execute()) {
-            if ($name !== $current_username) {
-                $_SESSION['username'] = $name;
-            }
-            $stmt->close();
-            $conn->close();
-            header("Location: ../html/UserProfile.php?update=success");
-            exit();
-        } else {
-            $errors[] = "Error updating profile: " . $stmt->error;
-            $stmt->close();
-            $conn->close();
-        }
-        session_start();
-    }
-
-    // Display errors
-    if (!empty($errors)) {
-        foreach ($errors as $error) {
-            echo "<p>" . htmlspecialchars($error) . "</p>";
-    }
 }
-}
-
-?>
