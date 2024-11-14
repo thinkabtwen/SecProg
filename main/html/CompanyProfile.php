@@ -8,7 +8,7 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Company') {
   }
 
 $username = $_SESSION['username'];
-$sql = "SELECT name, email FROM users WHERE name = ?";
+$sql = "SELECT name, email, profile_image FROM users WHERE name = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $username);
 $stmt->execute();
@@ -18,9 +18,11 @@ if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
     $name = $row['name'];
     $email = $row['email'];
+    $profile_image = $row['profile_image'];
 } else {
     $name = "Not available";
     $email = "Not available";
+    $profile_image = '../../Image/default_profile.jpg';
 }
 ?>
 
@@ -38,15 +40,22 @@ if ($result->num_rows > 0) {
     </div>
     <div class="row col-8 border rounded mx-auto mt-5 p-2 shadow-lg">
         <div class="col-md-4 text-center mt-5">
-            <img src="../../Image/default_profile.jpg" class="img-fluid rounded" alt="logo">
+        <?php
+            $profile_image_path = "../../Image/default_profile.jpg"; 
+            if (!empty($profile_image) && file_exists($profile_image)) {
+                $profile_image_path = $profile_image; 
+            }
+            $display_image = !empty($profile_image) ? htmlspecialchars($profile_image_path) : '../../Image/default_profile.jpg';
+            ?>
+            <img src="<?php echo $display_image; ?>" class="img-fluid rounded" alt="logo">
             <div>
                 <a href="./CompanyProfileEdit.php"><button class="mx-auto m-1 btn-lg btn btn-primary">Update Profile</button></a>
             </div>
         </div>
         <div class="col-md-8">
-            <div class="h2">User  Profile</div>
+            <div class="h2">Company  Profile</div>
             <table class="container-fluid table table-striped">
-                <tr><th colspan="2">User  Details:</th></tr>
+                <tr><th colspan="2">Company  Details:</th></tr>
                 <tr><th><i class="fa fa-user-circle"></i> Company Name</th><td><?php echo htmlspecialchars($name); ?></td></tr>
                 <tr><th><i class="fa fa-envelope"></i> Company Email</th><td><?php echo htmlspecialchars($email); ?></td></tr>
                 <tr><th><i class="fa fa-briefcase"></i> Company Specialization</th><td>IT</td></tr>

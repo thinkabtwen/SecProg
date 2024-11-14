@@ -6,6 +6,34 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Company') {
 }
 
 $username = htmlspecialchars($_SESSION['username']);
+
+$servername = "localhost";
+$username_db = "root";
+$password_db = "";
+$dbname = "cyber_resource";
+
+$conn = new mysqli($servername, $username_db, $password_db, $dbname);
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+$current_username = $_SESSION['username'];
+$sql = "SELECT * FROM users WHERE name = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $current_username);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows !== 1) {
+    echo "User not found!";
+    exit();
+}
+
+$user = $result->fetch_assoc();
+
+$stmt->close();
+$conn->close();
 ?>
 
 <html>
@@ -22,37 +50,49 @@ $username = htmlspecialchars($_SESSION['username']);
     </div>
     <div class="row col-8 border rounded mx-auto mt-5 p-2 shadow-lg">
         <div class="col-md-4 text-center mt-5">
-            <img src="../../Image/default_profile.jpg" class="js-image img-fluid rounded" alt="logo">
-            <div class="text-left">
-                <label for="formFileLg" class="form-label">Input an image</label>
-                <input onchange="display_image(this.files[0])" class="form-control form-control-lg" id="formFileLg" type="file">
-              </div>
+        <?php
+            $profile_image = $user['profile_image'];
+            $profile_image_path = "../../Image/default_profile.jpg"; 
+            if (!empty($profile_image) && file_exists($profile_image)) {
+                $profile_image_path = $profile_image; 
+            }
+            $profile_image = !empty($user['profile_image']) ? htmlspecialchars($profile_image_path) : '../../Image/default_profile.jpg';
+            ?>
+            <img src="<?php echo $profile_image; ?>" class="js-image img-fluid rounded" alt="Profile Image">
+            <form action="../php/config.php" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="form_type" value="company_profile">
+            <div class="text-left mt-3">
+                <label for="formFileLg" class="form-label">Change Profile Image</label>
+                <input onchange="display_image(this.files[0])" class="form-control form-control-lg" id="formFileLg" type="file" accept="image/jpg, image/jpeg, image/png" name="profile_image">
+            </div>
         </div>
         <div class="col-md-8">
             <div class="h2">Edit Profile</div>
-            <form method="post">
+            <input type="hidden" name="edit_profile" value="1">
                 <table class="container-fluid table table-striped">
-                    <tr><th colspan="2">User Details:</th></tr>
+                    <tr><th colspan="2">Company Details:</th></tr>
                     <tr><th><i class="fa fa-user-circle"></i> Company Name</th>
-                        <td><input type="text" class="form-control" name="name" placeholder="name"></td></tr>
+                        <td><input type="text" class="form-control" name="name" placeholder="Name" value="<?php echo htmlspecialchars($user['name']); ?>" required></td>
 
                     <tr><th><i class="fa fa-user-circle"></i> Password</th>
-                        <td><input type="text" class="form-control" name="passwords" placeholder="passwords"></td></tr>
+                    <td><input type="password" class="form-control" name="password" placeholder="New Password (leave blank to keep current)" minlength="8"></td>
 
                     <tr><th><i class="fa fa-envelope"></i> Company Email</th>
-                        <td><input type="text" class="form-control" name="email" placeholder="companyemail"></td></tr>
+                    <td><input type="email" class="form-control" name="email" placeholder="Email" value="<?php echo htmlspecialchars($user['email']); ?>" required></td>
 
                     <tr><th><i class="fa fa-briefcase"></i> Company Specialty</th>
-                        <td><input type="text" class="form-control" name="companyspecialty" placeholder="companyspecialty"></td></tr>
+                        <td><input type="text" class="form-control" name="companyspecialty" placeholder="companyspecialty" value="<?php echo htmlspecialchars($user['CompanySpecialization']); ?>"></td>
+
 
                     <tr><th><i class="fa fa-home"></i> Address</th>
-                        <td><input type="text" class="form-control" name="address" placeholder="address"></td></tr> 
+                        <td><input type="text" class="form-control" name="address" placeholder="address" value="<?php echo htmlspecialchars($user['address']); ?>"></td>
+
                 </table>
             <div class="p-2">
                 <a href="./CompanyProfile.php">
                     <label type="button" class="btn-lg btn-primary">Back</label>
                 </a>
-                <button class="btn-lg btn-primary float-end">Save</button>
+                <button type="submit" class="btn-lg btn-primary float-end">Save</button>
             </div>
         </form>
         </div>

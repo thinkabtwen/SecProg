@@ -69,6 +69,7 @@ $conn->close();
             ?>
             <img src="<?php echo $profile_image; ?>" class="js-image img-fluid rounded" alt="Profile Image">
             <form action="../php/config.php" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="form_type" value="customer_profile">
             <div class="text-left mt-3">
                 <label for="formFileLg" class="form-label">Change Profile Image</label>
                 <input onchange="display_image(this.files[0])" class="form-control form-control-lg" id="formFileLg" type="file" accept="image/jpg, image/jpeg, image/png" name="profile_image">
