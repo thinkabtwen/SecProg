@@ -59,17 +59,18 @@ $conn->close();
         <div class="col-md-4 text-center mt-5">
             <?php
             // Display user's profile image
-            $profile_image = !empty($user['profile_image']) ? '../uploads/' . htmlspecialchars($user['profile_image']) : '../../Image/default_profile.jpg';
+            $profile_image = !empty($user['profile_image']) ? htmlspecialchars($user['profile_image']) : '../../Image/default_profile.jpg';
             ?>
             <img src="<?php echo $profile_image; ?>" class="js-image img-fluid rounded" alt="Profile Image">
+            <form action="../php/config.php" method="post" enctype="multipart/form-data">
             <div class="text-left mt-3">
                 <label for="formFileLg" class="form-label">Change Profile Image</label>
-                <input onchange="display_image(this.files[0])" class="form-control form-control-lg" id="formFileLg" type="file" name="profile_image" accept="image/*">
+                <input onchange="display_image(this.files[0])" class="form-control form-control-lg" id="formFileLg" type="file" accept="image/jpg, image/jpeg, image/png" name="profile_image">
             </div>
         </div>
         <div class="col-md-8">
             <div class="h2">Edit Profile</div>
-            <form action="../php/config.php" method="post" enctype="multipart/form-data">
+    
                 <input type="hidden" name="edit_profile" value="1">
                 <table class="container-fluid table table-striped">
                     <tr><th colspan="2">User Details:</th></tr>
