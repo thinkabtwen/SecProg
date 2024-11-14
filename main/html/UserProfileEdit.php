@@ -57,9 +57,15 @@ $conn->close();
     </div>
     <div class="row col-8 border rounded mx-auto mt-5 p-2 shadow-lg form-container">
         <div class="col-md-4 text-center mt-5">
+
+        
             <?php
-            // Display user's profile image
-            $profile_image = !empty($user['profile_image']) ? htmlspecialchars($user['profile_image']) : '../../Image/default_profile.jpg';
+            $profile_image = $user['profile_image'];
+            $profile_image_path = "../../Image/default_profile.jpg"; 
+            if (!empty($profile_image) && file_exists($profile_image)) {
+                $profile_image_path = $profile_image; 
+            }
+            $profile_image = !empty($user['profile_image']) ? htmlspecialchars($profile_image_path) : '../../Image/default_profile.jpg';
             ?>
             <img src="<?php echo $profile_image; ?>" class="js-image img-fluid rounded" alt="Profile Image">
             <form action="../php/config.php" method="post" enctype="multipart/form-data">

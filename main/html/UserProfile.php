@@ -51,7 +51,14 @@ $conn->close();
     </div>
     <div class="row col-8 border rounded mx-auto mt-5 p-2 shadow-lg">
         <div class="col-md-4 text-center mt-5">
-            <img src="<?php echo $profile_image; ?>" class="img-fluid rounded" alt="logo">
+        <?php
+            $profile_image_path = "../../Image/default_profile.jpg"; 
+            if (!empty($profile_image) && file_exists($profile_image)) {
+                $profile_image_path = $profile_image; 
+            }
+            $display_image = !empty($profile_image) ? htmlspecialchars($profile_image_path) : '../../Image/default_profile.jpg';
+            ?>
+            <img src="<?php echo $display_image; ?>" class="img-fluid rounded" alt="logo">
             <div>
                 <a href="./UserProfileEdit.php"><button class="mx-auto m-1 btn-lg btn btn-primary">Update Profile</button></a>
             </div>
