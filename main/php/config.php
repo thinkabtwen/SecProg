@@ -380,7 +380,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["edit_profile"])) {
     $profile_image = $user['profile_image'];
     if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
         $file_tmp_path = $_FILES['profile_image']['tmp_name'];
-        $file_name = basename($_FILES['profile_image']['name']);
+        $fileName = basename($_FILES['profile_image']['name']);
         $file_size = $_FILES['profile_image']['size'];
         $file_type = mime_content_type($file_tmp_path);
 
@@ -398,8 +398,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["edit_profile"])) {
 
         if (empty($errors)) {
             // Generate a unique file name to prevent overwriting
-            $new_file_name = uniqid('profile_', true) . '.' . pathinfo($file_name, PATHINFO_EXTENSION);
             $upload_dir = '../uploads/';
+            $new_file_name = uniqid('profile_', true) . '.' . pathinfo($fileName, PATHINFO_EXTENSION);
             $dest_path = $upload_dir . $new_file_name;
 
             // Move the file to the upload directory
@@ -411,7 +411,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["edit_profile"])) {
                         unlink($old_image_path);
                     }
                 }
-                $profile_image = $new_file_name;
+                $uploaded_image_url = $upload_dir . $new_file_name;
+                $profile_image = $uploaded_image_url;
             } else {
                 $errors[] = "There was an error uploading the profile image.";
             }
