@@ -5,6 +5,9 @@ $username = "root";
 $password = "";
 $dbname = "cyber_resource";
 
+
+
+
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
 
@@ -41,6 +44,54 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["register"])) {
                         $stmt = $conn->prepare($sql);
                         $stmt->bind_param("ssss", $name, $email, $hashed_password, $role);
                         $stmt->execute();
+
+                        //  Profile Picture
+                        if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
+                            $file_tmp_path = $_FILES['profile_image']['tmp_name'];
+                            $fileName = basename($_FILES['profile_image']['name']);
+                            $file_size = $_FILES['profile_image']['size'];
+                            $file_type = mime_content_type($file_tmp_path);
+                        
+                            $allowedTypes = ['image/jpg', 'image/jpeg', 'image/png'];
+                        
+                            if (!in_array($file_type, $allowedTypes)) {
+                                $errors[] = "Only JPG, PNG, and JPEG files are allowed for profile images.";
+                            }
+                        
+                            if ($file_size > 2 * 1024 * 1024) {
+                                $errors[] = "Profile image size must be less than 2MB.";
+                            }
+                        
+                            if (empty($errors)) {
+                                $upload_dir = '../uploads/';
+                                $new_file_name = uniqid('profile_', true) . '.' . pathinfo($fileName, PATHINFO_EXTENSION);
+                                $dest_path = $upload_dir . $new_file_name;
+                        
+                                if (!is_dir($upload_dir)) {
+                                    mkdir($upload_dir, 0755, true);
+                                }
+                        
+                                if (move_uploaded_file($file_tmp_path, $dest_path)) {
+                                    $uploaded_image_url = $upload_dir . $new_file_name;
+                                    $sql = "UPDATE users SET profile_image = ? WHERE email = ?";
+                                    $stmt = $conn->prepare($sql);
+                                    $stmt->bind_param("ss", $uploaded_image_url, $email);  // Assuming $email is available
+                                    $stmt->execute();
+                                    
+                                } else {
+                                    $errors[] = "There was an error uploading the profile image.";
+                                }
+                            }
+                        
+                            if (!empty($errors)) {
+                                foreach ($errors as $error) {
+                                    echo $error . "<br>";
+                                }
+                            }
+                        } else {
+                            echo "No file uploaded or there was an error with the upload.";
+                        }                        
+                        //  End of Profile Picture
 
                         // Redirect to LoginPage.html
                         header("Location: ../html/LoginPage.html");
