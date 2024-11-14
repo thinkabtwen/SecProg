@@ -7,7 +7,7 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Customer') {
 }
 
 $username = htmlspecialchars($_SESSION['username']);
-$sql = "SELECT name, email, age, gender, address, profession FROM users WHERE name = ?";
+$sql = "SELECT name, email, age, gender, address, profession, profile_image FROM users WHERE name = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $username);
 $stmt->execute();
@@ -21,6 +21,7 @@ if ($result->num_rows > 0) {
     $gender = $row['gender'];
     $address = $row['address'];
     $profession = $row['profession'];
+    $profile_image = $row['profile_image'];
 } else {
     $name = "Not available";
     $email = "Not available";
@@ -28,7 +29,9 @@ if ($result->num_rows > 0) {
     $gender = "Not available";
     $address = "Not available";
     $profession = "Not available";
+    $profile_image = '../../Image/default_profile.jpg';
 }
+
 
 $stmt->close();
 $conn->close();
@@ -48,7 +51,7 @@ $conn->close();
     </div>
     <div class="row col-8 border rounded mx-auto mt-5 p-2 shadow-lg">
         <div class="col-md-4 text-center mt-5">
-            <img src="../../Image/default_profile.jpg" class="img-fluid rounded" alt="logo">
+            <img src="<?php echo $profile_image; ?>" class="img-fluid rounded" alt="logo">
             <div>
                 <a href="./UserProfileEdit.php"><button class="mx-auto m-1 btn-lg btn btn-primary">Update Profile</button></a>
             </div>
