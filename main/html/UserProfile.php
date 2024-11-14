@@ -7,7 +7,7 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Customer') {
 }
 
 $username = htmlspecialchars($_SESSION['username']);
-$sql = "SELECT name, email FROM users WHERE name = ?";
+$sql = "SELECT name, email, age, gender, address, profession FROM users WHERE name = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $username);
 $stmt->execute();
@@ -17,9 +17,17 @@ if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
     $name = $row['name'];
     $email = $row['email'];
+    $age = $row['age'];
+    $gender = $row['gender'];
+    $address = $row['address'];
+    $profession = $row['profession'];
 } else {
     $name = "Not available";
     $email = "Not available";
+    $age = "Not available";
+    $gender = "Not available";
+    $address = "Not available";
+    $profession = "Not available";
 }
 
 $stmt->close();
@@ -50,11 +58,11 @@ $conn->close();
             <table class="container-fluid table table-striped">
                 <tr><th colspan="2">User Details:</th></tr>
                 <tr><th><i class="fa fa-user-circle"></i> Name</th><td><?php echo htmlspecialchars($name); ?></td></tr>
-                <tr><th><i class="fa fa-calendar"></i> Age</th><td>not specified</td></tr>
+                <tr><th><i class="fa fa-calendar"></i> Age</th><td><?php echo htmlspecialchars($age); ?></td></tr>
                 <tr><th><i class="fa fa-envelope"></i> Email</th><td><?php echo htmlspecialchars($email); ?></td></tr>
-                <tr><th><i class="fa fa-transgender"></i> Gender</th><td>not specified</td></tr>
-                <tr><th><i class="fa fa-briefcase"></i> Profession</th><td>not specified</td></tr>
-                <tr><th><i class="fa fa-home"></i> Address</th><td>not specified</td></tr>            
+                <tr><th><i class="fa fa-transgender"></i> Gender</th><td><?php echo htmlspecialchars($gender); ?></td></tr>
+                <tr><th><i class="fa fa-briefcase"></i> Profession</th><td><?php echo htmlspecialchars($profession); ?></td></tr>
+                <tr><th><i class="fa fa-home"></i> Address</th><td><?php echo htmlspecialchars($address); ?></td></tr>            
             </table>
         </div>
         <a href="./UserHomePage.php">
