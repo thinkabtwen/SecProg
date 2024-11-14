@@ -48,11 +48,13 @@ $username = htmlspecialchars($_SESSION['username']);
 
             <div class="box">
                 <form action="../php/config.php" method="post" enctype="multipart/form-data">
-                    <input type="submit" name="logout" value="LOGOUT" class="btn">
+                <button type="submit" name="logout" style="background: none; border: none; cursor: pointer;">
+                        <img src="../../Image/logout.png" alt="Logout">
+                    </button>
                 </form>
-                
-            </div>  
-            
+                <h3>Logout</h3>
+                <h5>Logout of your account here</h5>
+            </div>
         </div>
     </section>
 </body>
