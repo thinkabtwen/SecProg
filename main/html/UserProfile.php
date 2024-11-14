@@ -50,11 +50,11 @@ $conn->close();
             <table class="container-fluid table table-striped">
                 <tr><th colspan="2">User Details:</th></tr>
                 <tr><th><i class="fa fa-user-circle"></i> Name</th><td><?php echo htmlspecialchars($name); ?></td></tr>
-                <tr><th><i class="fa fa-calendar"></i> Age</th><td>email.@email.com</td></tr>
+                <tr><th><i class="fa fa-calendar"></i> Age</th><td>not specified</td></tr>
                 <tr><th><i class="fa fa-envelope"></i> Email</th><td><?php echo htmlspecialchars($email); ?></td></tr>
-                <tr><th><i class="fa fa-transgender"></i> Gender</th><td>email.@email.com</td></tr>
-                <tr><th><i class="fa fa-briefcase"></i> Profession</th><td>email.@email.com</td></tr>
-                <tr><th><i class="fa fa-home"></i> Address</th><td>email.@email.com</td></tr>            
+                <tr><th><i class="fa fa-transgender"></i> Gender</th><td>not specified</td></tr>
+                <tr><th><i class="fa fa-briefcase"></i> Profession</th><td>not specified</td></tr>
+                <tr><th><i class="fa fa-home"></i> Address</th><td>not specified</td></tr>            
             </table>
         </div>
         <a href="./UserHomePage.php">
