@@ -1,9 +1,13 @@
 <?php
 session_start();
 require '../php/config.php';
-if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Company') {
-    header("Location: ../html/LoginPage.html");
-    exit();
+if (isset($_SESSION['errors']) && !empty($_SESSION['errors'])) {
+    echo "<div style='color: red;'>";
+    foreach ($_SESSION['errors'] as $error) {
+        echo "<p>" . htmlspecialchars($error) . "</p>";
+    }
+    echo "</div>";
+    unset($_SESSION['errors']); 
 }
 
 $username = htmlspecialchars($_SESSION['username']);
@@ -16,7 +20,7 @@ $stmt->execute();
 $result = $stmt->get_result();
 
 if ($result->num_rows !== 1) {
-    echo "User not found!";
+    $_SESSION['error'] = "User not found!";
     exit();
 }
 
@@ -48,7 +52,7 @@ $conn->close();
             }
             $profile_image = !empty($user['profile_image']) ? htmlspecialchars($profile_image_path) : '../../Image/default_profile.jpg';
             ?>
-            <img src="<?php echo $profile_image; ?>" class="js-image img-fluid rounded" alt="Profile Image">
+            <img src="<?php echo htmlspecialchars($profile_image); ?>" class="js-image img-fluid rounded" alt="Profile Image">
             <form action="../php/config.php" method="post" enctype="multipart/form-data">
             <input type="hidden" name="form_type" value="company_profile">
             <div class="text-left mt-3">
@@ -66,6 +70,11 @@ $conn->close();
 
                     <tr><th><i class="fa fa-user-circle"></i> Password</th>
                     <td><input type="password" class="form-control" name="password" placeholder="New Password (leave blank to keep current)" minlength="8"></td>
+
+                    <tr>
+                        <th><i class="fa fa-lock"></i> Confirm Password</th>
+                        <td><input type="password" class="form-control" name="confirm_password" placeholder="Confirm New Password" minlength="8"></td>
+                    </tr>
 
                     <tr><th><i class="fa fa-envelope"></i> Company Email</th>
                     <td><input type="email" class="form-control" name="email" placeholder="Email" value="<?php echo htmlspecialchars($user['email']); ?>" required></td>

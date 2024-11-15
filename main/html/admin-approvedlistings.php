@@ -2,8 +2,13 @@
 session_start();
 require '../php/config.php';
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
-    header("Location: ../html/LoginPage.html");
+    header("Location: ../html/LoginPage.php");
     exit();
+}
+
+if (isset($_SESSION['error'])) {
+  echo "<p style='color: red;'>" . htmlspecialchars($_SESSION['error'], ENT_QUOTES, 'UTF-8') . "</p>";
+  unset($_SESSION['error']); 
 }
 
 $username = $_SESSION['username'];
@@ -74,7 +79,7 @@ $conn->close();
               echo '<p>Benefits: ' . htmlspecialchars($row["benefits"], ENT_QUOTES, 'UTF-8') . '</p>';
           }
       } else {
-          echo "<p>No job listings found.</p>";
+          echo htmlspecialchars("No job listings found.");
       }
       ?>
       

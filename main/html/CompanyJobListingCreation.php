@@ -2,7 +2,7 @@
 session_start();
 require '../php/config.php';
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Company') {
-  header("Location: ../html/LoginPage.html");
+  header("Location: ../html/LoginPage.php");
   exit();
 }
 
@@ -21,27 +21,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Server-side validation
     if (empty($jobTitle) || empty($location) || empty($jobDescription) || empty($jobType) || empty($salary) || empty($benefits)) {
-        echo "Please fill in all required fields.";
+        echo htmlspecialchars("Please fill in all required fields.");
     } else if(!preg_match("/^[a-zA-Z ]*$/", $jobTitle)){
-      echo "Job title can only contain alphabet characters";
+      echo htmlspecialchars("Job title can only contain alphabet characters");
     } else if(!preg_match("/^[a-zA-Z0-9.\/ ]*$/", $location)){
-      echo "Location can only contain alphanumeric characters";
+      echo htmlspecialchars("Location can only contain alphanumeric characters");
     } else if(!preg_match("/^[a-zA-Z0-9 ]*$/", $jobDescription)){
-      echo "Job description can only contain alphanumeric characters";
+      echo htmlspecialchars("Job description can only contain alphanumeric characters");
     }else if(!preg_match("/^[a-zA-Z-]*$/", $jobType)){
-      echo "Job type can only contain alphabet characters";
+      echo htmlspecialchars("Job type can only contain alphabet characters");
     }else if(!preg_match("/^[0-9.,]*$/", $salary)){
-      echo "Salary can only contain numeric characters";
+      echo htmlspecialchars("Salary can only contain numeric characters");
     }else if (!preg_match("/^[a-zA-Z0-9. ]*$/", $benefits)){
-      echo "Job benefits can only contain alphanumeric characters";
+      echo htmlspecialchars("Job benefits can only contain alphanumeric characters");
     }else {
         $stmt = $conn->prepare("INSERT INTO job_listings (username, job_title, location, job_description, job_type, salary, benefits) VALUES (?, ?, ?, ?, ?, ?, ?)");
         $stmt->bind_param("sssssss", $username, $jobTitle, $location, $jobDescription, $jobType, $salary, $benefits);
 
         if ($stmt->execute()) {
-            echo "Job listing created successfully!";
+            echo htmlspecialchars("Job listing created successfully!");
         } else {
-            echo "Error create new job listings";
+            echo htmlspecialchars("Error create new job listings");
         }
         
         $stmt->close();

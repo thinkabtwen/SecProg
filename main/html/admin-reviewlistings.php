@@ -2,8 +2,13 @@
 session_start();
 require '../php/config.php';
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
-    header("Location: ../html/LoginPage.html");
+    header("Location: ../html/LoginPage.php");
     exit();
+}
+
+if (isset($_SESSION['error'])) {
+  echo "<p style='color: red;'>" . htmlspecialchars($_SESSION['error'], ENT_QUOTES, 'UTF-8') . "</p>";
+  unset($_SESSION['error']); 
 }
 
 $username = $_SESSION['username'];
@@ -75,21 +80,22 @@ $conn->close();
               
 
               // Delete button
-              echo '<form method="POST" action="../php/config.php" style="display:inline;">';
+              echo '<form method="POST" action="' . htmlspecialchars('../php/config.php', ENT_QUOTES, 'UTF-8') . '" style="display:inline;">';
               echo '<input type="hidden" name="job_id" value="' . htmlspecialchars($row["id"], ENT_QUOTES, 'UTF-8') . '">';
-              echo '<button type="submit" name="delete" class="btn btn-danger">Delete</button>';
+              echo '<button type="submit" name="delete" class="btn btn-danger">' . htmlspecialchars('Delete', ENT_QUOTES, 'UTF-8') . '</button>';
               echo '</form>';
 
               // Approve button
-              echo '<form method="POST" action="../php/config.php" style="display:inline;">';
+              echo '<form method="POST" action="' . htmlspecialchars('../php/config.php', ENT_QUOTES, 'UTF-8') . '" style="display:inline;">';
               echo '<input type="hidden" name="job_id" value="' . htmlspecialchars($row["id"], ENT_QUOTES, 'UTF-8') . '">';
-              echo '<button type="submit" name="approve" class="btn btn-primary" style="margin-left: 10px;">Approve</button>';
+              echo '<button type="submit" name="approve" class="btn btn-primary" style="margin-left: 10px;">' . htmlspecialchars('Approve', ENT_QUOTES, 'UTF-8') . '</button>';
               echo '</form>';
 
               echo '<hr><br>';
+
           }
       } else {
-          echo "<p>No job listings found.</p>";
+          echo htmlspecialchars("No job listings found.");
       }
       ?>
       

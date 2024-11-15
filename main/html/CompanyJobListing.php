@@ -2,8 +2,13 @@
 session_start();
 require '../php/config.php';
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Company') {
-  header("Location: ../html/LoginPage.html");
+  header("Location: ../html/LoginPage.php");
   exit();
+}
+
+if (isset($_SESSION['error'])) {
+  echo "<p style='color: red;'>" . htmlspecialchars($_SESSION['error'], ENT_QUOTES, 'UTF-8') . "</p>";
+  unset($_SESSION['error']); 
 }
 
 $username = $_SESSION['username'];
@@ -73,16 +78,16 @@ $conn->close();
               echo '<p>Jangkauan Gaji: ' . htmlspecialchars($row["salary"], ENT_QUOTES, 'UTF-8') . '</p>';
               echo '<p>Benefits: ' . htmlspecialchars($row["benefits"], ENT_QUOTES, 'UTF-8') . '</p>';
 
-             // Delete button 
-              echo '<form method="POST" action="../php/config.php" style="display:inline;">';
+              // Delete button 
+              echo '<form method="POST" action="' . htmlspecialchars('../php/config.php', ENT_QUOTES, 'UTF-8') . '" style="display:inline;">';
               echo '<input type="hidden" name="jobs_id" value="' . htmlspecialchars($row["id"], ENT_QUOTES, 'UTF-8') . '">';
-              echo '<button type="submit" name="delete-from-company" class="btn btn-danger">Delete</button>';
+              echo '<button type="submit" name="delete-from-company" class="btn btn-danger">' . htmlspecialchars('Delete', ENT_QUOTES, 'UTF-8') . '</button>';
               echo '</form>';
 
               echo '<hr><br>';
           }
       } else {
-          echo "<p>No job listings found.</p>";
+          echo htmlspecialchars("No job listings found.");
       }
       ?>
       

@@ -3,7 +3,7 @@ require '../php/config.php';
 session_start();
 
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Company') {
-    header("Location: ../html/LoginPage.html");
+    header("Location: ../html/LoginPage.php");
     exit();
   }
 
@@ -51,7 +51,7 @@ if ($result->num_rows > 0) {
             }
             $display_image = !empty($profile_image) ? htmlspecialchars($profile_image_path) : '../../Image/default_profile.jpg';
             ?>
-            <img src="<?php echo $display_image; ?>" class="img-fluid rounded" alt="logo">
+            <img src="<?php echo htmlspecialchars($display_image); ?>" class="img-fluid rounded" alt="logo">
             <div>
                 <a href="./CompanyProfileEdit.php"><button class="mx-auto m-1 btn-lg btn btn-primary">Update Profile</button></a>
             </div>

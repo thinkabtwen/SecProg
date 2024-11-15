@@ -2,7 +2,7 @@
 session_start();
 require '../php/config.php';
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Company') {
-    header("Location: ../html/LoginPage.html");
+    header("Location: ../html/LoginPage.php");
     exit();
 }
 
@@ -62,7 +62,7 @@ $result = $conn->query($sql);
                   echo '<hr>';
               }
             } else {
-                echo '<p>No applicants found.</p>';
+                echo htmlspecialchars('No applicants found.');
             }
             $conn->close();
             ?>

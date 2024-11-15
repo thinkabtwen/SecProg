@@ -11,6 +11,11 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+// CSRF token
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
 // Register user
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["register"])) {
     $name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING);
@@ -18,6 +23,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["register"])) {
     $password = $_POST["password"];
     $cpassword = $_POST["cpassword"];
     $role = filter_input(INPUT_POST, 'role', FILTER_SANITIZE_STRING);
+
+    session_start();
 
     if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
         if (preg_match("/^[a-zA-Z0-9]*$/", $name)) {
@@ -31,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["register"])) {
                     $result = $stmt->get_result();
 
                     if ($result->num_rows == 1) {
-                        echo "Username or email is already taken!";
+                        $_SESSION['error'] = "Username or email is already taken!";
                     } else {
                         // Insert new user
                         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
@@ -40,71 +47,73 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["register"])) {
                         $stmt->bind_param("ssss", $name, $email, $hashed_password, $role);
                         $stmt->execute();
 
-                        //  Profile Picture
+                        // Handle Profile Picture Upload
                         if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
                             $file_tmp_path = $_FILES['profile_image']['tmp_name'];
                             $fileName = basename($_FILES['profile_image']['name']);
                             $file_size = $_FILES['profile_image']['size'];
                             $file_type = mime_content_type($file_tmp_path);
-                        
+
                             $allowedTypes = ['image/jpg', 'image/jpeg', 'image/png'];
-                        
-                            if (!in_array($file_type, $allowedTypes)) {
+                            $file_extension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+
+                            if (!in_array($file_type, $allowedTypes) || !in_array($file_extension, ['jpg', 'jpeg', 'png'])) {
                                 $errors[] = "Only JPG, PNG, and JPEG files are allowed for profile images.";
                             }
-                        
+
                             if ($file_size > 2 * 1024 * 1024) {
                                 $errors[] = "Profile image size must be less than 2MB.";
                             }
-                        
-                            if (empty($errors)) {
+
+                            if ($file_size > 2 * 1024 * 1024) {
+                                $_SESSION['error'] = "Profile image size must be less than 2MB.";
+                            }
+
+                            if (!isset($_SESSION['error'])) { 
                                 $upload_dir = '../uploads/';
                                 $new_file_name = uniqid('profile_', true) . '.' . pathinfo($fileName, PATHINFO_EXTENSION);
                                 $dest_path = $upload_dir . $new_file_name;
-                        
+
                                 if (!is_dir($upload_dir)) {
                                     mkdir($upload_dir, 0755, true);
                                 }
-                        
+
                                 if (move_uploaded_file($file_tmp_path, $dest_path)) {
                                     $uploaded_image_url = $upload_dir . $new_file_name;
                                     $sql = "UPDATE users SET profile_image = ? WHERE email = ?";
                                     $stmt = $conn->prepare($sql);
-                                    $stmt->bind_param("ss", $uploaded_image_url, $email);  // Assuming $email is available
+                                    $stmt->bind_param("ss", $uploaded_image_url, $email);
                                     $stmt->execute();
-                                    
                                 } else {
-                                    $errors[] = "There was an error uploading the profile image.";
-                                }
-                            }
-                        
-                            if (!empty($errors)) {
-                                foreach ($errors as $error) {
-                                    echo $error . "<br>";
+                                    $_SESSION['error'] = "There was an error uploading the profile image.";
                                 }
                             }
                         } else {
-                            echo "No file uploaded or there was an error with the upload.";
-                        }                        
-                        //  End of Profile Picture
+                            $_SESSION['error'] = "No file uploaded or there was an error with the upload.";
+                        }
 
-                        // Redirect to LoginPage.html
-                        header("Location: ../html/LoginPage.html");
-                        exit();
+                        if (!isset($_SESSION['error'])) {
+                            header("Location: ../html/LoginPage.php");
+                            exit();
+                        }
                     }
                 } else {
-                    echo "Passwords do not match!";
+                    $_SESSION['error'] = "Passwords do not match!";
                 }
             } else {
-                echo "Password must be at least 8 characters long!";
+                $_SESSION['error'] = "Password must be at least 8 characters long!";
             }
         } else {
-            echo "Username can only contain alphanumeric characters.";
+            $_SESSION['error'] = "Username can only contain alphanumeric characters.";
         }
     } else {
-        echo "Invalid email format.";
+        $_SESSION['error'] = "Invalid email format.";
     }
+
+    header("Location: ../html/RegisterPage.php");
+    exit();
 }
+
 
 // User Login
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["login"])) {
@@ -122,7 +131,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["login"])) {
             $user = $result->fetch_assoc();
             if (password_verify($password, $user['password'])) {
                 session_regenerate_id(true);
-                
+
                 $_SESSION['username'] = $user['name'];
                 $_SESSION['role'] = $user['role'];
 
@@ -137,15 +146,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["login"])) {
                     exit();
                 }
             } else {
-                echo "Invalid email or password!";
+                $_SESSION['error'] = "Invalid email or password.";
+                header("Location: ../html/LoginPage.php");
+                exit();
             }
         } else {
-            echo "Invalid email or password!";
+            $_SESSION['error'] = "Invalid email or password.";
+            header("Location: ../html/LoginPage.php");
+            exit();
         }
     } else {
-        echo "Invalid email format.";
+        $_SESSION['error'] = "Invalid email format.";
+        header("Location: ../html/LoginPage.php");
+        exit();
     }
 }
+
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['logout'])){
     $_SESSION = array();
@@ -159,7 +175,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['logout'])){
     }
 
     session_destroy();
-    header("Location: ../html/LoginPage.html");
+    header("Location: ../html/LoginPage.php");
 }
 function deleteJobListing($conn, $job_id) {
     $sql = "DELETE FROM job_listings WHERE id = ?";
@@ -253,7 +269,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['job_id']) && isset($_
         header("Location: ../html/admin-reviewlistings.php"); 
         exit();
     } else {
-        echo "Error deleting listing.";
+        $_SESSION['error'] = "Error deleting listing";
     }
 }
 
@@ -265,7 +281,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['jobs_id']) && isset($
         header("Location: ../html/CompanyJobListing.php"); 
         exit();
     } else {
-        echo "Error deleting listing.";
+        $_SESSION['error'] = "Error deleting listing";
     }
 }
 
@@ -279,7 +295,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['user_id']) && isset($
         header("Location: ../html/admin-reviewusers.php"); 
         exit();
     } else {
-        echo "Error deleting listing.";
+        $_SESSION['error'] = "Error deleting users.";
     }
 }
 
@@ -291,7 +307,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['company_id']) && isse
         header("Location: ../html/admin-reviewcompany.php"); 
         exit();
     } else {
-        echo "Error deleting listing.";
+        $_SESSION['error'] = "Error deleting company";
     }
 }
 
@@ -302,7 +318,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['job_id']) && isset($_
         header("Location: ../html/admin-approvedlistings.php");
         exit();
     } else {
-        echo "Error approving listing.";
+        $_SESSION['error'] = "Error approving listing";
     }
 }
 
@@ -311,7 +327,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["edit_profile"])) {
     if (isset($_POST['form_type'])) {
         if ($_POST['form_type'] === 'customer_profile') {
             if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Customer') {
-                echo "Unauthorized access!";
+                $_SESSION['error'] = "Unauthorized access!";
                 exit();
             }
 
@@ -323,7 +339,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["edit_profile"])) {
             $result = $stmt->get_result();
 
             if ($result->num_rows !== 1) {
-                echo "User not found!";
+                $_SESSION['error'] = "User not found!";
                 exit();
             }
 
@@ -346,6 +362,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["edit_profile"])) {
 
             if (!preg_match("/^[a-zA-Z0-9 ]*$/", $name)) {
                 $errors[] = "Name can only contain alphanumeric characters and spaces.";
+            }
+
+            if (!preg_match("/^[a-zA-Z0-9.\/ ]*$/", $address)) {
+                $errors[] = "Address can only contain alphanumeric characters, spaces and backslashes.";
             }
 
             $allowed_genders = ['Male', 'Female'];
@@ -421,7 +441,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["edit_profile"])) {
                     }
                     $stmt->close();
                     $conn->close();
-                    header("Location: ../html/UserProfile.php?update=success");
+                    header("Location: ../html/UserProfile.php");
                     exit();
                 } else {
                     $errors[] = "Error updating profile: " . $stmt->error;
@@ -432,21 +452,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["edit_profile"])) {
             }
 
             if (!empty($errors)) {
-                foreach ($errors as $error) {
-                    echo "<p>" . htmlspecialchars($error) . "</p>";
-                }
+                $_SESSION['errors'] = $errors; 
+                header("Location: ../html/UserProfileEdit.php");
+                exit();
             }
             
         } 
     }
 }
 
+// Company update profile
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["edit_profile"])) {
-
-        // Company update profile
     if ($_POST['form_type'] === 'company_profile') {
         if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Company') {
-            echo "Unauthorized access!";
+            $_SESSION['error'] = "Unauthorized access!";
             exit();
         }
         $current_username = $_SESSION['username'];
@@ -457,7 +476,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["edit_profile"])) {
         $result = $stmt->get_result();
 
         if ($result->num_rows !== 1) {
-            echo "User not found!";
+            $_SESSION['error'] = "User not found!";
             exit();
         }
 
@@ -556,7 +575,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["edit_profile"])) {
                 }
                 $stmt->close();
                 $conn->close();
-                header("Location: ../html/CompanyProfile.php?update=success");
+                header("Location: ../html/CompanyProfile.php");
                 exit();
             } else {
                 $errors[] = "Error updating profile: " . $stmt->error;
@@ -567,9 +586,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["edit_profile"])) {
         }
 
         if (!empty($errors)) {
-            foreach ($errors as $error) {
-                echo "<p>" . htmlspecialchars($error) . "</p>";
-            }
+            $_SESSION['errors'] = $errors; 
+            header("Location: ../html/CompanyProfileEdit.php");
+            exit();
         }
     }
     }

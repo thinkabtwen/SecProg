@@ -1,9 +1,13 @@
 <?php
 session_start();
 require '../php/config.php';
-if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Customer') {
-    header("Location: ../html/LoginPage.html");
-    exit();
+if (isset($_SESSION['errors']) && !empty($_SESSION['errors'])) {
+    echo "<div style='color: red;'>";
+    foreach ($_SESSION['errors'] as $error) {
+        echo "<p>" . htmlspecialchars($error) . "</p>";
+    }
+    echo "</div>";
+    unset($_SESSION['errors']); 
 }
 
 $current_username = $_SESSION['username'];
@@ -14,7 +18,7 @@ $stmt->execute();
 $result = $stmt->get_result();
 
 if ($result->num_rows !== 1) {
-    echo "User not found!";
+    $_SESSION['error'] = "User not found!";
     exit();
 }
 
@@ -57,7 +61,7 @@ $conn->close();
             }
             $profile_image = !empty($user['profile_image']) ? htmlspecialchars($profile_image_path) : '../../Image/default_profile.jpg';
             ?>
-            <img src="<?php echo $profile_image; ?>" class="js-image img-fluid rounded" alt="Profile Image">
+            <img src="<?php echo htmlspecialchars($profile_image); ?>" class="js-image img-fluid rounded" alt="Profile Image">
             <form action="../php/config.php" method="post" enctype="multipart/form-data">
             <input type="hidden" name="form_type" value="customer_profile">
             <div class="text-left mt-3">
@@ -96,9 +100,8 @@ $conn->close();
                         <td>
                             <select class="form-select form-select-lg mb-3" name="gender" aria-label="Gender select" required>
                                 <option value="" disabled>Select Gender</option>
-                                <option value="Male" <?php if($user['gender'] === 'Male') echo 'selected'; ?>>Male</option>
-                                <option value="Female" <?php if($user['gender'] === 'Female') echo 'selected'; ?>>Female</option>
-                                <option value="Other" <?php if($user['gender'] === 'Other') echo 'selected'; ?>>Other</option>
+                                <option value="Male" <?php if($user['gender'] === 'Male') echo htmlspecialchars('selected'); ?>>Male</option>
+                                <option value="Female" <?php if($user['gender'] === 'Female') echo htmlspecialchars('selected'); ?>>Female</option>
                             </select>
                         </td>
                     </tr>

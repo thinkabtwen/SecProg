@@ -2,7 +2,7 @@
 session_start();
 require '../php/config.php';
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Company') {
-  header("Location: ../html/LoginPage.html");
+  header("Location: ../html/LoginPage.php");
   exit();
 }
 
@@ -79,7 +79,7 @@ $conn->close();
               echo '<hr><br>';
           }
       } else {
-          echo "<p>No job listings found.</p>";
+          echo htmlspecialchars("No job listings found.");
       }
       ?>
       
