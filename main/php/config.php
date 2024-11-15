@@ -5,13 +5,8 @@ $username = "root";
 $password = "";
 $dbname = "cyber_resource";
 
-
-
-
-// Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
 
-// Check connection
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
@@ -134,12 +129,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["login"])) {
                 // Check user role and redirect accordingly
                 if ($user['role'] == 'Company') {
                     header("Location: ../html/CompanyHomePage.php");
+                    session_regenerate_id(true);
                     exit();
                 } else if ($user['role'] == 'Customer') {
                     header("Location: ../html/UserHomePage.php");
+                    session_regenerate_id(true);
                     exit();
                 } else if($user['role'] == 'admin'){
                     header("Location: ../html/adminpanel.php");
+                    session_regenerate_id(true);
                 }
             } else {
                 echo "Invalid email or password!";
@@ -378,9 +376,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["edit_profile"])) {
                 $file_size = $_FILES['profile_image']['size'];
                 $file_type = mime_content_type($file_tmp_path);
 
-                $allowed_types = ['image/jpeg', 'image/png', 'image/jpg'];
+                $allowedTypes = ['image/jpg', 'image/jpeg', 'image/png'];
+                $file_extension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
 
-                if (!in_array($file_type, $allowed_types)) {
+                if (!in_array($file_type, $allowedTypes) || !in_array($file_extension, ['jpg', 'jpeg', 'png'])) {
                     $errors[] = "Only JPG, PNG, and JPEG files are allowed for profile images.";
                 }
 
@@ -512,9 +511,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["edit_profile"])) {
             $file_size = $_FILES['profile_image']['size'];
             $file_type = mime_content_type($file_tmp_path);
 
-            $allowed_types = ['image/jpeg', 'image/png', 'image/jpg'];
+            $allowedTypes = ['image/jpg', 'image/jpeg', 'image/png'];
+            $file_extension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
 
-            if (!in_array($file_type, $allowed_types)) {
+            if (!in_array($file_type, $allowedTypes) || !in_array($file_extension, ['jpg', 'jpeg', 'png'])) {
                 $errors[] = "Only JPG, PNG, and JPEG files are allowed for profile images.";
             }
 
