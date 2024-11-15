@@ -1,7 +1,7 @@
 <?php
 session_start();
 require '../php/config.php';
-if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Company') {
+if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Customer') {
     header("Location: ../html/LoginPage.php");
     exit();
 }

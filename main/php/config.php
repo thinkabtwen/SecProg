@@ -1,5 +1,6 @@
 <?php
 session_start();
+
 $servername = "localhost";
 $username = "root";
 $password = "";
@@ -11,20 +12,28 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// CSRF token
-if (empty($_SESSION['csrf_token'])) {
-    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+// Generate CSRF token
+if (empty($_SESSION['token'])) {
+    $_SESSION['token'] = bin2hex(random_bytes(32));
 }
 
 // Register user
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["register"])) {
+    session_start();
+
+    $token = filter_input(INPUT_POST, 'token', FILTER_SANITIZE_STRING);
+
+    // Validasi CSRF token
+    if (!$token || $token !== $_SESSION['token']) {
+        header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+        exit();
+    }
+
     $name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING);
     $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
     $password = $_POST["password"];
     $cpassword = $_POST["cpassword"];
     $role = filter_input(INPUT_POST, 'role', FILTER_SANITIZE_STRING);
-
-    session_start();
 
     if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
         if (preg_match("/^[a-zA-Z0-9]*$/", $name)) {
@@ -117,6 +126,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["register"])) {
 
 // User Login
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["login"])) {
+    session_start();
+
+    $token = filter_input(INPUT_POST, 'token', FILTER_SANITIZE_STRING);
+
+    // Validasi CSRF token
+    if (!$token || $token !== $_SESSION['token']) {
+        header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+        exit();
+    }
+
     $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
     $password = $_POST["password"];
 
@@ -135,6 +154,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["login"])) {
                 $_SESSION['username'] = $user['name'];
                 $_SESSION['role'] = $user['role'];
 
+                // Redirect sesuai role
                 if ($user['role'] == 'Company') {
                     header("Location: ../html/CompanyHomePage.php");
                     exit();
@@ -163,7 +183,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["login"])) {
 }
 
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['logout'])){
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['logout'])){
     $_SESSION = array();
 
     if (ini_get("session.use_cookies")) {
@@ -173,10 +193,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['logout'])){
             $params["secure"], $params["httponly"]
         );
     }
-
+    
     session_destroy();
+    session_start();
+    
+    // Regenerate CSRF token
+    $_SESSION['token'] = bin2hex(random_bytes(32));
+    
     header("Location: ../html/LoginPage.php");
 }
+
 function deleteJobListing($conn, $job_id) {
     $sql = "DELETE FROM job_listings WHERE id = ?";
     $stmt = $conn->prepare($sql);

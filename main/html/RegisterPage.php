@@ -22,6 +22,10 @@
 
             <?php 
             session_start();
+            // Generate CSRF token
+            if (empty($_SESSION['token'])) {
+                $_SESSION['token'] = bin2hex(random_bytes(32));
+            }
             if (isset($_SESSION['error'])) {
                 echo "<p style='color: red;'>" . htmlspecialchars($_SESSION['error'], ENT_QUOTES, 'UTF-8') . "</p>";
                 unset($_SESSION['error']); 
@@ -41,8 +45,9 @@
             Choose a profile picture
             <input type="file" class="box" accept="image/jpg, image/jpeg, image/png" name="profile_image">
             <input type="hidden" name="register" value="1">
+            <input type="hidden" name="token" value="<?php echo $_SESSION['token'] ?? '' ?>">
             <input type="submit" value="Register Now" class="btn">
-            <p>Already have an account? <a href="./LoginPage.html">Login now</a></p>
+            <p>Already have an account? <a href="./LoginPage.php">Login now</a></p>
         </form>
     </div>
 </body>

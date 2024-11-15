@@ -25,6 +25,10 @@
             
             <?php 
             session_start();
+            // Generate CSRF token
+            if (empty($_SESSION['token'])) {
+                $_SESSION['token'] = bin2hex(random_bytes(32));
+            }
             if (isset($_SESSION['error'])) {
                 echo "<p style='color: red;'>" . htmlspecialchars($_SESSION['error'], ENT_QUOTES, 'UTF-8') . "</p>";
                 unset($_SESSION['error']); 
@@ -34,8 +38,9 @@
             <input type="email" name="email" placeholder="enter email" class="box" required>
             <input type="password" name="password" placeholder="enter password" class="box" required>
             <input type="hidden" name="login" value="1">
+            <input type="hidden" name="token" value="<?php echo $_SESSION['token'] ?? '' ?>">
             <input type="submit" value="login now" class="btn">
-            <p>don't have an account? <a href="RegisterPage.html">register now</a></p>
+            <p>don't have an account? <a href="RegisterPage.php">register now</a></p>
         </form>
     </div>
 
