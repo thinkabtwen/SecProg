@@ -48,6 +48,14 @@ if ($result->num_rows == 1) {
 $stmt->close();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $token = filter_input(INPUT_POST, 'token', FILTER_SANITIZE_STRING);
+
+    // Validasi CSRF token
+    if (!$token || $token !== $_SESSION['token']) {
+        header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+        exit();
+    }
+
     // Sanitize user inputs to prevent XSS
     $jobTitle = filter_input(INPUT_POST, 'jobTitle', FILTER_SANITIZE_STRING);
     $location = filter_input(INPUT_POST, 'location', FILTER_SANITIZE_STRING);
@@ -72,7 +80,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else if (!preg_match("/^[a-zA-Z0-9 .,;:'\"()\-\n\r]*$/", $benefits)) {
         $_SESSION['error'] = "Benefits contain invalid characters.";
     } else {
-        // Update the job listing in the database
+        // Update job listing 
         $sql_update = "UPDATE job_listings SET job_title = ?, location = ?, job_description = ?, job_type = ?, salary = ?, benefits = ? WHERE id = ? AND username = ?";
         $stmt_update = $conn->prepare($sql_update);
 
@@ -112,6 +120,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </header>
         <main class="main">
             <h2>Edit Job Listing</h2>
+            <?php 
+            session_start();
+            // Generate CSRF token
+            if (empty($_SESSION['token'])) {
+                $_SESSION['token'] = bin2hex(random_bytes(32));
+            }
+            ?>
 
             <?php if (isset($_SESSION['error'])): ?>
                 <p style="color: red;"><?php echo htmlspecialchars($_SESSION['error'], ENT_QUOTES, 'UTF-8'); ?></p>
@@ -152,6 +167,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <label for="benefits">Benefits:</label>
                     <textarea id="benefits" name="benefits" rows="5" required><?php echo htmlspecialchars($job['benefits'], ENT_QUOTES, 'UTF-8'); ?></textarea>
                 </div>
+                <input type="hidden" name="token" value="<?php echo $_SESSION['token'] ?? '' ?>">
                 <button type="submit">Update Job Listing</button>
             </form>
 
