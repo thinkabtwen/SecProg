@@ -361,6 +361,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["edit_profile"])) {
                 $_SESSION['error'] = "Unauthorized access!";
                 exit();
             }
+            session_start();
+        
+            $token = filter_input(INPUT_POST, 'token', FILTER_SANITIZE_STRING);
+
+            // Validasi CSRF token
+            if (!$token || $token !== $_SESSION['token']) {
+                header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+                exit();
+            }
 
             $current_username = $_SESSION['username'];
             $sql = "SELECT * FROM users WHERE name = ?";
@@ -497,6 +506,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["edit_profile"])) {
     if ($_POST['form_type'] === 'company_profile') {
         if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Company') {
             $_SESSION['error'] = "Unauthorized access!";
+            exit();
+        }
+        session_start();
+
+        $token = filter_input(INPUT_POST, 'token', FILTER_SANITIZE_STRING);
+
+        // Validasi CSRF token
+        if (!$token || $token !== $_SESSION['token']) {
+            header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
             exit();
         }
         $current_username = $_SESSION['username'];
