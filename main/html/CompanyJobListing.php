@@ -6,6 +6,11 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Company') {
   exit();
 }
 
+// Generate CSRF token
+if (empty($_SESSION['token'])) {
+  $_SESSION['token'] = bin2hex(random_bytes(32));
+}
+
 if (isset($_SESSION['error'])) {
   echo "<p style='color: red;'>" . htmlspecialchars($_SESSION['error'], ENT_QUOTES, 'UTF-8') . "</p>";
   unset($_SESSION['error']); 
@@ -84,6 +89,7 @@ $conn->close();
               // Delete button 
               echo '<form method="POST" action="' . htmlspecialchars('../php/config.php', ENT_QUOTES, 'UTF-8') . '" style="display:inline;">';
               echo '<input type="hidden" name="jobs_id" value="' . htmlspecialchars($row["id"], ENT_QUOTES, 'UTF-8') . '">';
+              echo '<input type="hidden" name="token" value="' . htmlspecialchars($_SESSION['token'], ENT_QUOTES, 'UTF-8') . '">';
               echo '<button type="submit" name="delete-from-company" class="btn btn-danger">' . htmlspecialchars('Delete', ENT_QUOTES, 'UTF-8') . '</button>';
               echo '</form>';
 

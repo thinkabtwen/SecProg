@@ -9,7 +9,6 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Company') {
 
 $username = $_SESSION['username'];
 
-// Get the job ID from the GET parameter and validate it
 if (isset($_GET['id'])) {
     $job_id = intval($_GET['id']);
     if ($job_id <= 0) {
@@ -23,7 +22,6 @@ if (isset($_GET['id'])) {
     exit();
 }
 
-// Fetch the existing job listing from the database
 $sql = "SELECT * FROM job_listings WHERE id = ? AND username = ?";
 $stmt = $conn->prepare($sql);
 

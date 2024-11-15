@@ -293,7 +293,16 @@ function approveJobListing($conn, $job_id) {
 }
 
 // Delete logic
+// Admin delete job listing
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['job_id']) && isset($_POST['delete']) && isset($_SESSION['username']) && $_SESSION['role'] === 'admin') {
+    $token = filter_input(INPUT_POST, 'token', FILTER_SANITIZE_STRING);
+
+    // Validasi CSRF token
+    if (!$token || $token !== $_SESSION['token']) {
+        header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+        exit();
+    }
+
     $job_id = htmlspecialchars($_POST['job_id']);
     if (deleteJobListing($conn, $job_id)) {
         $conn->close();
@@ -306,6 +315,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['job_id']) && isset($_
 
 // Company delete own job listing
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['jobs_id']) && isset($_POST['delete-from-company']) && isset($_SESSION['username']) && $_SESSION['role'] === 'Company') {
+    $token = filter_input(INPUT_POST, 'token', FILTER_SANITIZE_STRING);
+
+    // Validasi CSRF token
+    if (!$token || $token !== $_SESSION['token']) {
+        header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+        exit();
+    }
+    
     $jobs_id = htmlspecialchars($_POST['jobs_id']);
     if (companyDeleteJobListing($conn, $jobs_id)) {
         $conn->close();
@@ -316,9 +333,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['jobs_id']) && isset($
     }
 }
 
-
-
+// Admin delete user
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['user_id']) && isset($_SESSION['username']) && $_SESSION['role'] === 'admin') {
+    $token = filter_input(INPUT_POST, 'token', FILTER_SANITIZE_STRING);
+
+    // Validasi CSRF token
+    if (!$token || $token !== $_SESSION['token']) {
+        header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+        exit();
+    }
+
     $user_id = htmlspecialchars($_POST['user_id']);
 
     if (deleteUsers($conn, $user_id)) {
@@ -330,7 +354,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['user_id']) && isset($
     }
 }
 
+// Admin delete company
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['company_id']) && isset($_SESSION['username']) && $_SESSION['role'] === 'admin') {
+    $token = filter_input(INPUT_POST, 'token', FILTER_SANITIZE_STRING);
+
+    // Validasi CSRF token
+    if (!$token || $token !== $_SESSION['token']) {
+        header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+        exit();
+    }
     $company_id = htmlspecialchars($_POST['company_id']);
 
     if (deleteCompany($conn, $company_id)) {
@@ -342,7 +374,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['company_id']) && isse
     }
 }
 
+// Admin approve job listing
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['job_id']) && isset($_POST['approve']) && isset($_SESSION['username']) && $_SESSION['role'] === 'admin') {
+    $token = filter_input(INPUT_POST, 'token', FILTER_SANITIZE_STRING);
+
+    // Validasi CSRF token
+    if (!$token || $token !== $_SESSION['token']) {
+        header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+        exit();
+    }
     $job_id = htmlspecialchars($_POST['job_id']);
     if (approveJobListing($conn, $job_id)) {
         $conn->close();
