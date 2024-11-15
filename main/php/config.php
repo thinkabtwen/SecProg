@@ -121,23 +121,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["login"])) {
         if ($result->num_rows == 1) {
             $user = $result->fetch_assoc();
             if (password_verify($password, $user['password'])) {
-                // Password is correct, login successful
-                // Store user name in session
+                session_regenerate_id(true);
+                
                 $_SESSION['username'] = $user['name'];
                 $_SESSION['role'] = $user['role'];
 
-                // Check user role and redirect accordingly
                 if ($user['role'] == 'Company') {
                     header("Location: ../html/CompanyHomePage.php");
-                    session_regenerate_id(true);
                     exit();
                 } else if ($user['role'] == 'Customer') {
                     header("Location: ../html/UserHomePage.php");
-                    session_regenerate_id(true);
                     exit();
-                } else if($user['role'] == 'admin'){
+                } else if ($user['role'] == 'admin') {
                     header("Location: ../html/adminpanel.php");
-                    session_regenerate_id(true);
+                    exit();
                 }
             } else {
                 echo "Invalid email or password!";
