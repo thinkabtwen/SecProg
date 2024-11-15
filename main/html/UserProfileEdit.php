@@ -6,6 +6,11 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Customer') {
     exit();
 }
 
+// Generate CSRF token
+if (empty($_SESSION['token'])) {
+    $_SESSION['token'] = bin2hex(random_bytes(32));
+}
+
 if (isset($_SESSION['errors']) && !empty($_SESSION['errors'])) {
     echo "<div style='color: red;'>";
     foreach ($_SESSION['errors'] as $error) {
@@ -121,6 +126,7 @@ $conn->close();
                 </table>
                 <div class="p-2">
                     <a href="./UserProfile.php" class="btn btn-lg btn-secondary">Back</a>
+                    <input type="hidden" name="token" value="<?php echo $_SESSION['token'] ?? '' ?>">
                     <button type="submit" class="btn btn-lg btn-primary float-end">Save</button>
                 </div>
             </form>

@@ -11,7 +11,14 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Company') {
 
 $username = htmlspecialchars($_SESSION['username']);
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && $_SESSION['role'] == 'Company') {
+    $token = filter_input(INPUT_POST, 'token', FILTER_SANITIZE_STRING);
+
+    // Validasi CSRF token
+    if (!$token || $token !== $_SESSION['token']) {
+        header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+        exit();
+    }
     // Sanitize user inputs to prevent XSS
     $jobTitle = filter_input(INPUT_POST, 'jobTitle', FILTER_SANITIZE_STRING);
     $location = filter_input(INPUT_POST, 'location', FILTER_SANITIZE_STRING);
@@ -68,6 +75,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </header>
     <main class="main">
       <h2>Create Job Listing</h2>
+      <?php 
+            session_start();
+            // Generate CSRF token
+            if (empty($_SESSION['token'])) {
+                $_SESSION['token'] = bin2hex(random_bytes(32));
+            }
+      ?>
 
       <?php if (isset($_SESSION['error'])): ?>
         <p style="color: red;"><?php echo htmlspecialchars($_SESSION['error'], ENT_QUOTES, 'UTF-8'); ?></p>
@@ -109,9 +123,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           <label for="benefits">Benefit*:</label>
           <textarea id="benefits" name="benefits" rows="5"></textarea>
         </div>
+        <input type="hidden" name="token" value="<?php echo $_SESSION['token'] ?? '' ?>">
         <button type="submit">Create Job Listing</button>
       </form>
-
       <a href="./CompanyJobListing.php">
         <label type="button" class="btn-lg btn-primary">Back</label>
       </a>
