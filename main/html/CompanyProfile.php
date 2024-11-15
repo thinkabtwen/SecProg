@@ -8,7 +8,7 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Company') {
   }
 
 $username = $_SESSION['username'];
-$sql = "SELECT name, email, profile_image FROM users WHERE name = ?";
+$sql = "SELECT name, email, profile_image, CompanySpecialization, address FROM users WHERE name = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $username);
 $stmt->execute();
@@ -19,10 +19,14 @@ if ($result->num_rows > 0) {
     $name = $row['name'];
     $email = $row['email'];
     $profile_image = $row['profile_image'];
+    $CompanySpecialization = $row['CompanySpecialization'];
+    $address = $row['address'];
 } else {
     $name = "Not available";
     $email = "Not available";
     $profile_image = '../../Image/default_profile.jpg';
+    $CompanySpecialization = "Not available";
+    $address = "Not available";
 }
 ?>
 
@@ -58,8 +62,8 @@ if ($result->num_rows > 0) {
                 <tr><th colspan="2">Company  Details:</th></tr>
                 <tr><th><i class="fa fa-user-circle"></i> Company Name</th><td><?php echo htmlspecialchars($name); ?></td></tr>
                 <tr><th><i class="fa fa-envelope"></i> Company Email</th><td><?php echo htmlspecialchars($email); ?></td></tr>
-                <tr><th><i class="fa fa-briefcase"></i> Company Specialization</th><td>IT</td></tr>
-                <tr><th><i class="fa fa-home"></i> Address</th><td>alamat</td></tr>            
+                <tr><th><i class="fa fa-briefcase"></i> Company Specialization</th><td><?php echo htmlspecialchars($CompanySpecialization); ?></td></tr>
+                <tr><th><i class="fa fa-home"></i> Address</th><td><?php echo htmlspecialchars($address); ?></td></tr>            
             </table>
         </div>
         <a href="./CompanyHomePage.php">

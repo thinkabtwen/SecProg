@@ -1,5 +1,6 @@
 <?php
 session_start();
+require '../php/config.php';
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Company') {
     header("Location: ../html/LoginPage.html");
     exit();
@@ -7,19 +8,8 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Company') {
 
 $username = htmlspecialchars($_SESSION['username']);
 
-$servername = "localhost";
-$username_db = "root";
-$password_db = "";
-$dbname = "cyber_resource";
-
-$conn = new mysqli($servername, $username_db, $password_db, $dbname);
-
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
 $current_username = $_SESSION['username'];
-$sql = "SELECT * FROM users WHERE name = ?";
+$sql = "SELECT * FROM users WHERE name = ? AND role = 'Company'";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $current_username);
 $stmt->execute();
@@ -81,7 +71,7 @@ $conn->close();
                     <td><input type="email" class="form-control" name="email" placeholder="Email" value="<?php echo htmlspecialchars($user['email']); ?>" required></td>
 
                     <tr><th><i class="fa fa-briefcase"></i> Company Specialty</th>
-                        <td><input type="text" class="form-control" name="companyspecialty" placeholder="companyspecialty" value="<?php echo htmlspecialchars($user['CompanySpecialization']); ?>"></td>
+                        <td><input type="text" class="form-control" name="CompanySpecialization" placeholder="companyspecialty" value="<?php echo htmlspecialchars($user['CompanySpecialization']); ?>"></td>
 
 
                     <tr><th><i class="fa fa-home"></i> Address</th>

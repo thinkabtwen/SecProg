@@ -7,7 +7,7 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Customer') {
 }
 
 $current_username = $_SESSION['username'];
-$sql = "SELECT * FROM users WHERE name = ?";
+$sql = "SELECT * FROM users WHERE name = ? AND role = 'Customer'";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $current_username);
 $stmt->execute();
