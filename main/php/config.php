@@ -311,9 +311,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['job_id']) && isset($_
     }
 }
 
-
-
-
+// User edit profile
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["edit_profile"])) {
     if (isset($_POST['form_type'])) {
         if ($_POST['form_type'] === 'customer_profile') {
@@ -322,7 +320,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["edit_profile"])) {
                 exit();
             }
 
-            // Fetch current user data
             $current_username = $_SESSION['username'];
             $sql = "SELECT * FROM users WHERE name = ?";
             $stmt = $conn->prepare($sql);
@@ -337,7 +334,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["edit_profile"])) {
 
             $user = $result->fetch_assoc();
 
-            // Retrieve and sanitize inputs
             $name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING);
             $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
             $age = filter_input(INPUT_POST, 'age', FILTER_VALIDATE_INT);
@@ -347,26 +343,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["edit_profile"])) {
             $password = $_POST['password'] ?? '';
             $confirm_password = $_POST['confirm_password'] ?? '';
 
-            // Initialize an array to hold errors
             $errors = [];
 
-            // Validate email
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $errors[] = "Invalid email format.";
             }
 
-            // Validate name (only allow alphanumeric and spaces)
             if (!preg_match("/^[a-zA-Z0-9 ]*$/", $name)) {
                 $errors[] = "Name can only contain alphanumeric characters and spaces.";
             }
 
-            // Validate gender
-            $allowed_genders = ['Male', 'Female', 'Other'];
+            $allowed_genders = ['Male', 'Female'];
             if (!in_array($gender, $allowed_genders)) {
                 $errors[] = "Invalid gender selected.";
             }
 
-            // Handle password change if provided
             $hashed_password = null;
             if (!empty($password)) {
                 if (strlen($password) < 8) {
@@ -380,7 +371,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["edit_profile"])) {
                 }
             }
 
-            // Handle profile image upload
             $profile_image = $user['profile_image'];
             if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
                 $file_tmp_path = $_FILES['profile_image']['tmp_name'];
@@ -388,27 +378,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["edit_profile"])) {
                 $file_size = $_FILES['profile_image']['size'];
                 $file_type = mime_content_type($file_tmp_path);
 
-                // Allowed file types
-                $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
+                $allowed_types = ['image/jpeg', 'image/png', 'image/jpg'];
 
                 if (!in_array($file_type, $allowed_types)) {
-                    $errors[] = "Only JPG, PNG, and GIF files are allowed for profile images.";
+                    $errors[] = "Only JPG, PNG, and JPEG files are allowed for profile images.";
                 }
 
-                // Limit file size to 2MB
                 if ($file_size > 2 * 1024 * 1024) {
                     $errors[] = "Profile image size must be less than 2MB.";
                 }
 
                 if (empty($errors)) {
-                    // Generate a unique file name to prevent overwriting
                     $upload_dir = '../uploads/';
                     $new_file_name = uniqid('profile_', true) . '.' . pathinfo($fileName, PATHINFO_EXTENSION);
                     $dest_path = $upload_dir . $new_file_name;
 
-                    // Move the file to the upload directory
                     if (move_uploaded_file($file_tmp_path, $dest_path)) {
-                        // Optionally, delete the old profile image if it's not the default
                         if (!empty($profile_image) && $profile_image !== 'default_profile.jpg') {
                             $old_image_path = $upload_dir . $profile_image;
                             if (file_exists($old_image_path)) {
@@ -450,19 +435,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["edit_profile"])) {
                 session_start();
             }
 
-            // Display errors
             if (!empty($errors)) {
                 foreach ($errors as $error) {
                     echo "<p>" . htmlspecialchars($error) . "</p>";
                 }
             }
+            // Company update profile
         } elseif ($_POST['form_type'] === 'company_profile') {
             if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Company') {
                 echo "Unauthorized access!";
                 exit();
             }
-
-            // Fetch current user data
             $current_username = $_SESSION['username'];
             $sql = "SELECT * FROM users WHERE name = ?";
             $stmt = $conn->prepare($sql);
@@ -477,7 +460,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["edit_profile"])) {
 
             $user = $result->fetch_assoc();
 
-            // Retrieve and sanitize inputs
             $name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING);
             $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
             $specialty = filter_input(INPUT_POST, 'CompanySpecialization', FILTER_SANITIZE_STRING);
@@ -485,20 +467,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["edit_profile"])) {
             $password = $_POST['password'] ?? '';
             $confirm_password = $_POST['confirm_password'] ?? '';
 
-            // Initialize an array to hold errors
             $errors = [];
 
-            // Validate email
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $errors[] = "Invalid email format.";
             }
 
-            // Validate name (only allow alphanumeric and spaces)
             if (!preg_match("/^[a-zA-Z0-9 ]*$/", $name)) {
                 $errors[] = "Name can only contain alphanumeric characters and spaces.";
             }
 
-            // Handle password change if provided
             $hashed_password = null;
             if (!empty($password)) {
                 if (strlen($password) < 8) {
@@ -512,7 +490,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["edit_profile"])) {
                 }
             }
 
-            // Handle profile image upload
             $profile_image = $user['profile_image'];
             if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
                 $file_tmp_path = $_FILES['profile_image']['tmp_name'];
@@ -520,27 +497,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["edit_profile"])) {
                 $file_size = $_FILES['profile_image']['size'];
                 $file_type = mime_content_type($file_tmp_path);
 
-                // Allowed file types
-                $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
+                $allowed_types = ['image/jpeg', 'image/png', 'image/jpg'];
 
                 if (!in_array($file_type, $allowed_types)) {
-                    $errors[] = "Only JPG, PNG, and GIF files are allowed for profile images.";
+                    $errors[] = "Only JPG, PNG, and JPEG files are allowed for profile images.";
                 }
 
-                // Limit file size to 2MB
                 if ($file_size > 2 * 1024 * 1024) {
                     $errors[] = "Profile image size must be less than 2MB.";
                 }
 
                 if (empty($errors)) {
-                    // Generate a unique file name to prevent overwriting
                     $upload_dir = '../uploads/';
                     $new_file_name = uniqid('profile_', true) . '.' . pathinfo($fileName, PATHINFO_EXTENSION);
                     $dest_path = $upload_dir . $new_file_name;
 
-                    // Move the file to the upload directory
                     if (move_uploaded_file($file_tmp_path, $dest_path)) {
-                        // Optionally, delete the old profile image if it's not the default
                         if (!empty($profile_image) && $profile_image !== 'default_profile.jpg') {
                             $old_image_path = $upload_dir . $profile_image;
                             if (file_exists($old_image_path)) {
@@ -582,7 +554,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["edit_profile"])) {
                 session_start();
             }
 
-            // Display errors
             if (!empty($errors)) {
                 foreach ($errors as $error) {
                     echo "<p>" . htmlspecialchars($error) . "</p>";

@@ -1,19 +1,9 @@
 <?php
 session_start();
+require '../php/config.php';
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Customer') {
     header("Location: ../html/LoginPage.html");
     exit();
-}
-
-$servername = "localhost";
-$username_db = "root";
-$password_db = "";
-$dbname = "cyber_resource";
-
-$conn = new mysqli($servername, $username_db, $password_db, $dbname);
-
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
 }
 
 $current_username = $_SESSION['username'];
