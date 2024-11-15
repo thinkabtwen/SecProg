@@ -34,6 +34,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["register"])) {
     $password = $_POST["password"];
     $cpassword = $_POST["cpassword"];
     $role = filter_input(INPUT_POST, 'role', FILTER_SANITIZE_STRING);
+    
+    // Validate the role
+    $role = filter_input(INPUT_POST, 'role', FILTER_SANITIZE_STRING);
+    $allowed_roles = ['Company', 'Customer'];
+    if (!in_array($role, $allowed_roles)) {
+        $_SESSION['error'] = "Invalid role selected.";
+        header("Location: ../html/RegisterPage.php");
+        exit();
+    }
 
     if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
         if (preg_match("/^[a-zA-Z0-9]*$/", $name)) {
