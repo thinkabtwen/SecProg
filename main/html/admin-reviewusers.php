@@ -85,7 +85,7 @@ $conn->close();
 
           }
       } else {
-          echo htmlspecialchars("No users found.");
+        $_SESSION['error'] = "No users found!";
       }
       ?>
       

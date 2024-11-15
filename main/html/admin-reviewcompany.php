@@ -85,7 +85,7 @@ $conn->close();
 
           }
       } else {
-          echo htmlspecialchars("No companies found.");
+        $_SESSION['error'] = "No companies found!";
       }
       ?>
       

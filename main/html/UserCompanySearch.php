@@ -6,6 +6,11 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Customer') {
   exit();
 }
 
+if (isset($_SESSION['error'])) {
+  echo "<p style='color: red;'>" . htmlspecialchars($_SESSION['error'], ENT_QUOTES, 'UTF-8') . "</p>";
+  unset($_SESSION['error']); 
+}
+
 $username = htmlspecialchars($_SESSION['username']);
 $sql = "SELECT name, address, CompanySpecialization FROM users WHERE role = 'Company'";
 $result = $conn->query($sql);
@@ -59,7 +64,7 @@ $result = $conn->query($sql);
               echo '<hr>';
           }
       } else {
-          echo htmlspecialchars('No companies found.');
+        $_SESSION['error'] = "No companies found!";
       }
 
       $conn->close();

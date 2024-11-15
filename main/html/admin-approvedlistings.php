@@ -79,7 +79,7 @@ $conn->close();
               echo '<p>Benefits: ' . htmlspecialchars($row["benefits"], ENT_QUOTES, 'UTF-8') . '</p>';
           }
       } else {
-          echo htmlspecialchars("No job listings found.");
+          $_SESSION['error'] = "No job listings found!";
       }
       ?>
       

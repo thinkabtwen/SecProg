@@ -6,6 +6,11 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Company') {
   exit();
 }
 
+if (isset($_SESSION['error'])) {
+  echo "<p style='color: red;'>" . htmlspecialchars($_SESSION['error'], ENT_QUOTES, 'UTF-8') . "</p>";
+  unset($_SESSION['error']); 
+}
+
 $username = $_SESSION['username'];
 
 $sql = "SELECT job_title, location, job_description, job_type, salary, benefits FROM approved_job_listings WHERE username = ?";
@@ -79,7 +84,7 @@ $conn->close();
               echo '<hr><br>';
           }
       } else {
-          echo htmlspecialchars("No job listings found.");
+        $_SESSION['error'] = "No job listings found!";
       }
       ?>
       

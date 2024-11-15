@@ -1,14 +1,15 @@
 <?php
 session_start();
+unset($_SESSION['error']); 
+
 require '../php/config.php';
+
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Company') {
   header("Location: ../html/LoginPage.php");
   exit();
 }
 
 $username = htmlspecialchars($_SESSION['username']);
-
-
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Sanitize user inputs to prevent XSS
@@ -21,33 +22,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Server-side validation
     if (empty($jobTitle) || empty($location) || empty($jobDescription) || empty($jobType) || empty($salary) || empty($benefits)) {
-        echo htmlspecialchars("Please fill in all required fields.");
+        $_SESSION['error'] = "Please fill in all required fields.";
     } else if(!preg_match("/^[a-zA-Z ]*$/", $jobTitle)){
-      echo htmlspecialchars("Job title can only contain alphabet characters");
+        $_SESSION['error'] = "Job title can only contain alphabet characters";
     } else if(!preg_match("/^[a-zA-Z0-9.\/ ]*$/", $location)){
-      echo htmlspecialchars("Location can only contain alphanumeric characters");
+        $_SESSION['error'] = "Location can only contain alphanumeric characters";
     } else if(!preg_match("/^[a-zA-Z0-9 ]*$/", $jobDescription)){
-      echo htmlspecialchars("Job description can only contain alphanumeric characters");
-    }else if(!preg_match("/^[a-zA-Z-]*$/", $jobType)){
-      echo htmlspecialchars("Job type can only contain alphabet characters");
-    }else if(!preg_match("/^[0-9.,]*$/", $salary)){
-      echo htmlspecialchars("Salary can only contain numeric characters");
-    }else if (!preg_match("/^[a-zA-Z0-9. ]*$/", $benefits)){
-      echo htmlspecialchars("Job benefits can only contain alphanumeric characters");
-    }else {
+        $_SESSION['error'] = "Job description can only contain alphanumeric characters";
+    } else if(!preg_match("/^[a-zA-Z-]*$/", $jobType)){
+        $_SESSION['error'] = "Job type can only contain alphabet characters";
+    } else if(!preg_match("/^[0-9.,]*$/", $salary)){
+        $_SESSION['error'] = "Salary can only contain numeric characters";
+    } else if (!preg_match("/^[a-zA-Z0-9. ]*$/", $benefits)){
+        $_SESSION['error'] = "Job benefits can only contain alphanumeric characters";
+    } else {
         $stmt = $conn->prepare("INSERT INTO job_listings (username, job_title, location, job_description, job_type, salary, benefits) VALUES (?, ?, ?, ?, ?, ?, ?)");
         $stmt->bind_param("sssssss", $username, $jobTitle, $location, $jobDescription, $jobType, $salary, $benefits);
 
         if ($stmt->execute()) {
-            echo htmlspecialchars("Job listing created successfully!");
+            $success_message = "Job listing created successfully!";
         } else {
-            echo htmlspecialchars("Error create new job listings");
+            $error_message = "Error creating new job listings";
         }
-        
+
         $stmt->close();
         $conn->close();
     }
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -67,7 +69,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <main class="main">
       <h2>Create Job Listing</h2>
 
-      <?php if (!empty($success_message)): ?>
+      <?php if (isset($_SESSION['error'])): ?>
+        <p style="color: red;"><?php echo htmlspecialchars($_SESSION['error'], ENT_QUOTES, 'UTF-8'); ?></p>
+        <?php unset($_SESSION['error']); ?>
+      <?php elseif (!empty($success_message)): ?>
         <p style="color:green;"><?php echo htmlspecialchars($success_message, ENT_QUOTES, 'UTF-8'); ?></p>
       <?php elseif (!empty($error_message)): ?>
         <p style="color:red;"><?php echo htmlspecialchars($error_message, ENT_QUOTES, 'UTF-8'); ?></p>

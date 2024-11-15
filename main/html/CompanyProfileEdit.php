@@ -1,6 +1,11 @@
 <?php
 session_start();
 require '../php/config.php';
+if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Company') {
+    header("Location: ../html/LoginPage.php");
+    exit();
+}
+
 if (isset($_SESSION['errors']) && !empty($_SESSION['errors'])) {
     echo "<div style='color: red;'>";
     foreach ($_SESSION['errors'] as $error) {

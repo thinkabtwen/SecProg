@@ -87,7 +87,7 @@ $conn->close();
               echo '<hr><br>';
           }
       } else {
-          echo htmlspecialchars("No job listings found.");
+        $_SESSION['error'] = "No job listings found!";
       }
       ?>
       

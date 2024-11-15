@@ -5,7 +5,7 @@ session_start();
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Company') {
     header("Location: ../html/LoginPage.php");
     exit();
-  }
+}
 
 $username = $_SESSION['username'];
 $sql = "SELECT name, email, profile_image, CompanySpecialization, address FROM users WHERE name = ?";
