@@ -48,6 +48,7 @@ $username = htmlspecialchars($_SESSION['username']);
 
             <div class="box">
                 <form action="../php/config.php" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="token" value="<?php echo $_SESSION['token'] ?? '' ?>">
                 <button type="submit" name="logout" style="background: none; border: none; cursor: pointer;">
                         <img src="../../Image/logout.png" alt="Logout">
                     </button>

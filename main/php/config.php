@@ -184,6 +184,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["login"])) {
 
 
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['logout'])){
+    $token = filter_input(INPUT_POST, 'token', FILTER_SANITIZE_STRING);
+
+    // Validasi CSRF token
+    if (!$token || $token !== $_SESSION['token']) {
+        header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
+        exit();
+    }
+
     $_SESSION = array();
 
     if (ini_get("session.use_cookies")) {
@@ -195,12 +203,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['logout'])){
     }
     
     session_destroy();
-    session_start();
-    
-    // Regenerate CSRF token
-    $_SESSION['token'] = bin2hex(random_bytes(32));
     
     header("Location: ../html/LoginPage.php");
+    exit();
 }
 
 function deleteJobListing($conn, $job_id) {
