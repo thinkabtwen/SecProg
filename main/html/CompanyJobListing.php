@@ -78,6 +78,9 @@ $conn->close();
               echo '<p>Jangkauan Gaji: ' . htmlspecialchars($row["salary"], ENT_QUOTES, 'UTF-8') . '</p>';
               echo '<p>Benefits: ' . htmlspecialchars($row["benefits"], ENT_QUOTES, 'UTF-8') . '</p>';
 
+              //Edit button
+              echo '<a href="./CompanyJobListingEdit.php?id=' . htmlspecialchars($row["id"], ENT_QUOTES, 'UTF-8') . '" class="btn btn-primary" style="margin-right: 10px;">Edit</a>';
+
               // Delete button 
               echo '<form method="POST" action="' . htmlspecialchars('../php/config.php', ENT_QUOTES, 'UTF-8') . '" style="display:inline;">';
               echo '<input type="hidden" name="jobs_id" value="' . htmlspecialchars($row["id"], ENT_QUOTES, 'UTF-8') . '">';
