@@ -288,29 +288,6 @@ nav .fa{
     letter-spacing: 1px;
 }
 
-.team-box-2 img{
-    width: 120px;
-    height: auto;
-    border-radius: 15px;
-    margin-bottom: 15px;
-    opacity: 0.02;
-}
-
-.team-box-2 h3{
-    font-size: 23px;
-    font-weight: 600;
-    margin-bottom: 8px;
-    opacity: 0.1;
-}
-
-.team-box-2 h5{
-    font-size: 15px;
-    font-weight: 600;
-    margin-bottom: 15px;
-    letter-spacing: 1px;
-    opacity: 0.1;
-}
-
 footer {
   text-align: center;
   padding: 30px;
