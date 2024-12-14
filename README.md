@@ -1,7 +1,7 @@
 # SecProg
 Final Project for SecProg
 
-UNDER CONSTRUCTION 🚧
+FINISHED 🏁
 
 How to run:
 
