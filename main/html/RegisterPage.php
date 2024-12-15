@@ -1,6 +1,6 @@
 <html>
 <head>
-    <title>Register Page</title>
+    <title>Register Page | Cyber Resource</title>
     <link rel="stylesheet" href="../css/RegisterLoginPageStyle.css"> <!-- RegisterLoginPageStyle.css -->
 </head>
 <body>

@@ -19,7 +19,7 @@ $result = $conn->query($sql);
 <html>
 <html lang="en">
 <head>
-  <title>User Company Jobs</title>
+  <title>User Company Jobs | Cyber Resource</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="../css/UserCompanyJobs.css">

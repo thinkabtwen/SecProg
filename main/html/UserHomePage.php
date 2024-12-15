@@ -9,7 +9,7 @@ $username = htmlspecialchars($_SESSION['username']);
 ?>
 <html>
 <head>
-    <title>Home Page</title>
+    <title>Home Page | Cyber Resource</title>
     <link rel="stylesheet" href="../css/UserHomePageStyle.css"> <!-- UserHomePageStyle.css -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>

@@ -109,7 +109,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Edit Job Listing</title>
+    <title>Edit Job Listing | Cyber Resource</title>
     <link rel="stylesheet" href="../css/CompanyJobListingCreationStyle.css">
 </head>
 <body>
