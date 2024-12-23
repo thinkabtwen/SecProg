@@ -1,3 +1,19 @@
+<?php
+session_start();
+require '../php/config.php';
+if (isset($_SESSION['username'])){
+    if ($_SESSION['role'] === 'Company') {
+        header("Location: ./CompanyHomePage.php");
+        exit();
+    } else if ($_SESSION['role'] === 'Customer'){
+        header("Location: ./UserHomePage.php");
+        exit();
+    } else if ($_SESSION['role'] === 'admin'){
+        header("Location: ./adminpanel.php");
+        exit();
+    }
+}
+?>
 <html>
 <head>
     <title>Register Page | Cyber Resource</title>
